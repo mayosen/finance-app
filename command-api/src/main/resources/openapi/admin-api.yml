@@ -1,0 +1,47 @@
+openapi: 3.0.1
+info:
+  title: Admin API
+  description: API for administrative operations
+  version: 1.0.0
+tags:
+  - name: admin
+    description: Administrative commands
+paths:
+  /admin-api/v1/replay:
+    post:
+      tags:
+        - admin
+      summary: Replay events for an account
+      operationId: replayEvents
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplayEventsRequest'
+      responses:
+        '200':
+          description: Events replayed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCommandResponse'
+components:
+  schemas:
+    ReplayEventsRequest:
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: "acc123"
+      required:
+        - accountId
+
+    AdminCommandResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "e1be0f53-007a-4d58-805b-2c5a64fd3ff4"
+      required:
+        - id

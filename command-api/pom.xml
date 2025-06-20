@@ -69,7 +69,7 @@
                             <execution>
                                 <id>api-v1-generation</id>
                                 <goals>
-                                    <goal>generate-sources</goal>
+                                    <goal>generate</goal>
                                 </goals>
                                 <configuration>
                                     <inputSpec>${project.basedir}/src/main/resources/openapi/command-api.yml</inputSpec>
@@ -81,6 +81,31 @@
                                         <basePackage>com.mayosen.financeapp.command.api.v1</basePackage>
                                         <apiPackage>com.mayosen.financeapp.command.api.v1</apiPackage>
                                         <modelPackage>com.mayosen.financeapp.command.api.v1</modelPackage>
+                                        <library>spring-boot</library>
+                                        <useResponseEntity>true</useResponseEntity>
+                                        <openApiNullable>false</openApiNullable>
+                                        <interfaceOnly>true</interfaceOnly>
+                                        <skipDefaultInterface>true</skipDefaultInterface>
+                                        <useTags>true</useTags>
+                                        <useSpringBoot3>true</useSpringBoot3>
+                                    </configOptions>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>admin-api-v1-generation</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>${project.basedir}/src/main/resources/openapi/admin-api.yml</inputSpec>
+                                    <output>${project.basedir}</output>
+                                    <generatorName>kotlin-spring</generatorName>
+                                    <generateSupportingFiles>false</generateSupportingFiles>
+                                    <configOptions>
+                                        <sourceFolder>src/generated/kotlin</sourceFolder>
+                                        <basePackage>com.mayosen.financeapp.command.api.admin</basePackage>
+                                        <apiPackage>com.mayosen.financeapp.command.api.admin</apiPackage>
+                                        <modelPackage>com.mayosen.financeapp.command.api.admin</modelPackage>
                                         <library>spring-boot</library>
                                         <useResponseEntity>true</useResponseEntity>
                                         <openApiNullable>false</openApiNullable>

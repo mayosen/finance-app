@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController
 class AdminController(
     private val commandGateway: CommandGateway,
 ) : AdminApi {
-    override fun replayEvents(request: ReplayEventsRequest): ResponseEntity<AdminCommandResponse> {
-        logger.info { "Received ReplayEventsCommand: $request" }
+    override fun replayEvents(replayEventsRequest: ReplayEventsRequest): ResponseEntity<AdminCommandResponse> {
+        logger.info { "Received ReplayEventsCommand: $replayEventsRequest" }
         val command =
             ReplayEventsCommand(
                 id = generateCommandId(),
-                accountId = request.accountId,
+                accountId = replayEventsRequest.accountId,
             )
         commandGateway.send(command)
         return sendCommandReturningId(command)
