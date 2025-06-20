@@ -62,12 +62,35 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>clean-generated-api</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <configuration>
+                                    <filesets>
+                                        <fileset>
+                                            <directory>${project.basedir}/src/generated/kotlin</directory>
+                                            <includes>
+                                                <include>**/*.kt</include>
+                                            </includes>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.openapitools</groupId>
                         <artifactId>openapi-generator-maven-plugin</artifactId>
                         <version>${openapi-generator-maven-plugin.version}</version>
                         <executions>
                             <execution>
-                                <id>api-v1-generation</id>
+                                <id>generate-api-v1</id>
                                 <goals>
                                     <goal>generate</goal>
                                 </goals>
@@ -92,7 +115,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>admin-api-v1-generation</id>
+                                <id>generate-admin-api-v1</id>
                                 <goals>
                                     <goal>generate</goal>
                                 </goals>
