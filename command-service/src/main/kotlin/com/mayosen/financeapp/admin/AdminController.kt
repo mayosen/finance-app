@@ -32,5 +32,5 @@ class AdminController(
         return ResponseEntity.ok(response)
     }
 
-    companion object : Logging
+    private companion object : Logging
 }

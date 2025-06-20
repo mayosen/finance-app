@@ -16,8 +16,7 @@ class KafkaEventPublisher(
     private val objectMapper: ObjectMapper,
     private val kafkaTemplate: KafkaTemplate<String, String>,
 ) : EventPublisher,
-    InitializingBean,
-    Logging {
+    InitializingBean {
     override fun publish(event: Event) {
         val dto = EventDto(type = event::class.qualifiedName!!, event = event)
         val json = objectMapper.writeValueAsString(dto)
@@ -46,4 +45,6 @@ class KafkaEventPublisher(
         // https://stackoverflow.com/a/49494338/18989230
         // kafkaTemplate.setCloseTimeout(Duration.ofSeconds(5))
     }
+
+    private companion object : Logging
 }

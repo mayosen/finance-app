@@ -6,7 +6,9 @@ import com.mayosen.financeapp.readmodel.transactionhistory.Transaction
 import com.mayosen.financeapp.readmodel.transactionhistory.TransactionHistoryStore
 import com.mayosen.financeapp.readmodel.transactionhistory.TransactionType
 import com.mayosen.financeapp.util.IdGenerator
+import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
+import org.springframework.transaction.support.TransactionTemplate
 import java.math.BigDecimal
 
 // TODO: Здесь и в других местах групповые изменения выполнять в транзакции. TransactionTemplate, например
@@ -18,6 +20,7 @@ import java.math.BigDecimal
 class AccountProjector(
     private val accountSummaryStore: AccountSummaryStore,
     private val transactionHistoryStore: TransactionHistoryStore,
+    private val transactionTemplate: TransactionTemplate,
 ) {
     fun project(event: Event) {
         // TODO: Check if event is already applied in read model. Do not process it twice.
@@ -26,11 +29,13 @@ class AccountProjector(
             is DepositPerformedEvent -> applyDepositPerformed(event)
             is WithdrawalPerformedEvent -> applyWithdrawalPerformed(event)
             is TransferPerformedEvent -> applyTransferPerformed(event)
+            is AccountDeletedEvent -> applyAccountDeleted(event)
             else -> error("Unhandled event type: ${event::class.simpleName}")
         }
     }
 
     private fun applyAccountCreated(event: AccountCreatedEvent) {
+        logger.info { "Creating account summary. Event: $event" }
         val summary =
             AccountSummary(
                 accountId = event.aggregateId,
@@ -42,6 +47,7 @@ class AccountProjector(
     }
 
     private fun applyDepositPerformed(event: DepositPerformedEvent) {
+        logger.info { "Updating account summary. Adding transaction. Event: $event" }
         val summary =
             accountSummaryStore.findByAccountId(event.aggregateId)
                 ?: throw IllegalStateException("Account not found: ${event.aggregateId}")
@@ -56,6 +62,7 @@ class AccountProjector(
     }
 
     private fun applyWithdrawalPerformed(event: WithdrawalPerformedEvent) {
+        logger.info { "Updating account summary. Adding transaction. Event: $event" }
         val summary =
             accountSummaryStore.findByAccountId(event.aggregateId)
                 ?: throw IllegalStateException("Account not found: ${event.aggregateId}")
@@ -70,6 +77,7 @@ class AccountProjector(
     }
 
     private fun applyTransferPerformed(event: TransferPerformedEvent) {
+        logger.info { "Updating accounts summary. Adding transactions to accounts. Event: $event" }
         val source =
             accountSummaryStore.findByAccountId(event.aggregateId)
                 ?: throw IllegalStateException("Source account not found: ${event.aggregateId}")
@@ -140,4 +148,15 @@ class AccountProjector(
             timestamp = this.timestamp,
             relatedAccountId = toAggregateId!!,
         )
+
+    private fun applyAccountDeleted(event: AccountDeletedEvent) {
+        logger.info { "Deleting account summary, deleting transactions. Event: $event" }
+
+        transactionTemplate.executeWithoutResult {
+            accountSummaryStore.deleteByAccountId(event.aggregateId)
+            transactionHistoryStore.deleteAllByAccountId(event.aggregateId)
+        }
+    }
+
+    private companion object : Logging
 }

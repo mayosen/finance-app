@@ -133,5 +133,5 @@ class CommandHandler(
         }
     }
 
-    companion object : Logging
+    private companion object : Logging
 }
