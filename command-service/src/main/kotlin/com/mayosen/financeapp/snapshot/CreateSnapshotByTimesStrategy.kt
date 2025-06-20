@@ -1,5 +1,6 @@
 package com.mayosen.financeapp.snapshot
 
+import com.mayosen.financeapp.aggregate.AccountAggregate
 import com.mayosen.financeapp.event.EventStore
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -10,8 +11,8 @@ class CreateSnapshotByTimesStrategy(
     private val timesNumber: Int,
     private val eventStore: EventStore,
 ) : CreateSnapshotStrategy {
-    override fun shouldCreateSnapshot(accountId: String): Boolean {
-        val totalEvents = eventStore.countByAggregateId(accountId)
-        return totalEvents % timesNumber == 0
+    override fun shouldCreateSnapshot(aggregate: AccountAggregate): Boolean {
+        val totalEvents = eventStore.countByAggregateId(aggregate.accountId)
+        return aggregate.created && totalEvents % timesNumber == 0
     }
 }

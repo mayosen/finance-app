@@ -28,9 +28,9 @@ class JdbcSnapshotStore(
 
     override fun save(aggregate: AccountAggregate) {
         val maxSequenceNumber =
-            eventEntityRepository.findMaxSequenceNumberByAggregateId(aggregate.id())
+            eventEntityRepository.findMaxSequenceNumberByAggregateId(aggregate.accountId)
                 ?: 0
-        val isNew = !accountSnapshotEntityRepository.existsById(aggregate.id())
+        val isNew = !accountSnapshotEntityRepository.existsById(aggregate.accountId)
         val entity =
             aggregate
                 .toSnapshot(maxSequenceNumber)
@@ -43,5 +43,9 @@ class JdbcSnapshotStore(
                     )
                 }
         accountSnapshotEntityRepository.save(entity)
+    }
+
+    override fun delete(aggregate: AccountAggregate) {
+        accountSnapshotEntityRepository.deleteById(aggregate.accountId)
     }
 }

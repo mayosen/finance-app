@@ -36,7 +36,7 @@ interface CommandApi {
     )
     @RequestMapping(
         method = [RequestMethod.POST],
-        value = ["/command-api/v1/commands/accounts"],
+        value = ["/command-api/v1/accounts"],
         produces = ["application/json"],
         consumes = ["application/json"],
     )
@@ -45,6 +45,32 @@ interface CommandApi {
             description = "",
             required = true,
         ) @Valid @RequestBody createAccountRequest: CreateAccountRequest,
+    ): ResponseEntity<CommandResponse>
+
+    @Operation(
+        tags = ["command"],
+        summary = "Delete an existing account",
+        operationId = "deleteAccount",
+        description = """""",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Account deleted successfully",
+                content = [Content(schema = Schema(implementation = CommandResponse::class))],
+            ),
+        ],
+    )
+    @RequestMapping(
+        method = [RequestMethod.DELETE],
+        value = ["/command-api/v1/accounts"],
+        produces = ["application/json"],
+        consumes = ["application/json"],
+    )
+    fun deleteAccount(
+        @Parameter(
+            description = "",
+            required = true,
+        ) @Valid @RequestBody deleteAccountRequest: DeleteAccountRequest,
     ): ResponseEntity<CommandResponse>
 
     @Operation(
@@ -62,7 +88,7 @@ interface CommandApi {
     )
     @RequestMapping(
         method = [RequestMethod.POST],
-        value = ["/command-api/v1/commands/deposit"],
+        value = ["/command-api/v1/deposit"],
         produces = ["application/json"],
         consumes = ["application/json"],
     )
@@ -88,7 +114,7 @@ interface CommandApi {
     )
     @RequestMapping(
         method = [RequestMethod.POST],
-        value = ["/command-api/v1/commands/transfer"],
+        value = ["/command-api/v1/transfer"],
         produces = ["application/json"],
         consumes = ["application/json"],
     )
@@ -114,7 +140,7 @@ interface CommandApi {
     )
     @RequestMapping(
         method = [RequestMethod.POST],
-        value = ["/command-api/v1/commands/withdraw"],
+        value = ["/command-api/v1/withdraw"],
         produces = ["application/json"],
         consumes = ["application/json"],
     )

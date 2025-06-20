@@ -16,7 +16,7 @@ class AdminController(
     private val commandGateway: CommandGateway,
 ) : AdminApi {
     override fun replayEvents(replayEventsRequest: ReplayEventsRequest): ResponseEntity<AdminCommandResponse> {
-        logger.info { "Received ReplayEventsCommand: $replayEventsRequest" }
+        logger.info { "Received ReplayEventsRequest: $replayEventsRequest" }
         val command =
             ReplayEventsCommand(
                 id = generateCommandId(),

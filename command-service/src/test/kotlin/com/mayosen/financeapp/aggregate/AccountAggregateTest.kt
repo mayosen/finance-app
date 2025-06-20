@@ -2,7 +2,9 @@ package com.mayosen.financeapp.aggregate
 
 import com.mayosen.financeapp.event.AccountCreatedEvent
 import com.mayosen.financeapp.event.DepositPerformedEvent
+import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.event.WithdrawalPerformedEvent
+import com.mayosen.financeapp.exception.AccountNotFoundException
 import com.mayosen.financeapp.snapshot.AccountSnapshot
 import com.mayosen.financeapp.test.ACCOUNT_ID
 import com.mayosen.financeapp.test.BALANCE_100
@@ -15,6 +17,7 @@ import org.assertj.core.api.Assertions.byLessThan
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -46,7 +49,7 @@ class AccountAggregateTest {
             aggregate.loadFromSnapshot(snapshot)
 
             // then
-            assertThat(aggregate.balance()).isEqualTo(BALANCE_100)
+            assertThat(aggregate.balance).isEqualTo(BALANCE_100)
             assertThat(aggregate.getUncommittedEvents()).isEmpty()
         }
     }
@@ -74,6 +77,20 @@ class AccountAggregateTest {
     @Nested
     inner class LoadFromHistoryTest {
         @Test
+        fun `should throw exception when event list is empty`() {
+            // given
+            val events = emptyList<Event>()
+
+            // when
+            val exception =
+                assertThrows<AccountNotFoundException> {
+                    aggregate.loadFromHistory(events)
+                }
+
+            assertThat(exception).hasMessageContaining(ACCOUNT_ID)
+        }
+
+        @Test
         fun `should load from history`() {
             // given
             val events =
@@ -100,7 +117,7 @@ class AccountAggregateTest {
 
             // then
             assertThat(aggregate.getUncommittedEvents()).isEmpty()
-            assertThat(aggregate.balance()).isEqualTo(BALANCE_50)
+            assertThat(aggregate.balance).isEqualTo(BALANCE_50)
         }
     }
 

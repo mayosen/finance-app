@@ -1,10 +1,12 @@
 package com.mayosen.financeapp.aggregate
 
 import com.mayosen.financeapp.event.AccountCreatedEvent
+import com.mayosen.financeapp.event.AccountDeletedEvent
 import com.mayosen.financeapp.event.DepositPerformedEvent
 import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.event.TransferPerformedEvent
 import com.mayosen.financeapp.event.WithdrawalPerformedEvent
+import com.mayosen.financeapp.exception.AccountNotFoundException
 import com.mayosen.financeapp.snapshot.AccountSnapshot
 import com.mayosen.financeapp.util.IdGenerator.generateEventId
 import java.math.BigDecimal
@@ -14,17 +16,13 @@ import java.math.BigDecimal
  * Применяет события, проверяет инварианты, генерирует новые события.
  */
 class AccountAggregate(
-    private val accountId: String,
+    val accountId: String,
 ) {
-    private var balance: BigDecimal = BigDecimal.ZERO
+    var balance: BigDecimal = BigDecimal.ZERO
 
     @Deprecated("Unused?")
-    private var created: Boolean = false
+    var created: Boolean = false
     private val newEvents = mutableListOf<Event>()
-
-    fun id(): String = accountId
-
-    fun balance(): BigDecimal = balance
 
     fun loadFromSnapshot(snapshot: AccountSnapshot) {
         require(snapshot.accountId == accountId) { "Snapshot ID does not match aggregate ID" }
@@ -44,6 +42,9 @@ class AccountAggregate(
      * Применяет историю событий для восстановления текущего состояния
      * */
     fun loadFromHistory(events: List<Event>) {
+        if (events.isEmpty()) {
+            throw AccountNotFoundException(accountId)
+        }
         events.forEach {
             applyEventAndStore(it, isNew = false)
         }
@@ -114,6 +115,18 @@ class AccountAggregate(
         applyEventAndStore(event)
     }
 
+    fun deleteAccount() {
+        if (!created) {
+            throw IllegalStateException("Account is not created")
+        }
+        val event =
+            AccountDeletedEvent(
+                eventId = generateEventId(),
+                aggregateId = accountId,
+            )
+        applyEventAndStore(event)
+    }
+
     /**
      * Применение события: изменяет состояние + сохраняет его, если оно новое.
      * */
@@ -137,6 +150,7 @@ class AccountAggregate(
             is DepositPerformedEvent -> balance += event.amount
             is WithdrawalPerformedEvent -> balance -= event.amount
             is TransferPerformedEvent -> balance -= event.amount
+            is AccountDeletedEvent -> created = false
             else -> throw IllegalArgumentException("Unexpected event: ${event::class.simpleName}")
         }
     }

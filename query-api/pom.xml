@@ -58,7 +58,7 @@
 
     <profiles>
         <profile>
-            <id>generate-api</id>
+            <id>generate-query-service-api</id>
             <build>
                 <plugins>
                     <plugin>

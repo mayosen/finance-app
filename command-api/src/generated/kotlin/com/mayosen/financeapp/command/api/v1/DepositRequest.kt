@@ -10,7 +10,7 @@ import jakarta.validation.Valid
  * @param amount
  */
 data class DepositRequest(
-    @Schema(example = "acc123", required = true, description = "")
+    @Schema(example = "e1be0f53-007a-4d58-805b-2c5a64fd3ff4", required = true, description = "")
     @get:JsonProperty("accountId", required = true) val accountId: String,
     @field:Valid
     @Schema(example = "50.00", required = true, description = "")

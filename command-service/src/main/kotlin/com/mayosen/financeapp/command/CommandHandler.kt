@@ -2,9 +2,12 @@ package com.mayosen.financeapp.command
 
 import com.mayosen.financeapp.aggregate.AccountAggregate
 import com.mayosen.financeapp.command.api.CreateAccountCommand
+import com.mayosen.financeapp.command.api.DeleteAccountCommand
 import com.mayosen.financeapp.command.api.DepositCommand
 import com.mayosen.financeapp.command.api.TransferCommand
 import com.mayosen.financeapp.command.api.WithdrawCommand
+import com.mayosen.financeapp.event.AccountCreatedEvent
+import com.mayosen.financeapp.event.AccountDeletedEvent
 import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.event.EventPublisher
 import com.mayosen.financeapp.event.EventStore
@@ -33,7 +36,7 @@ class CommandHandler(
 
         aggregate.createAccount(command.ownerId)
 
-        persistAndPublish(accountId, aggregate)
+        persistAndPublish(aggregate)
     }
 
     fun handleDeposit(command: DepositCommand) {
@@ -42,7 +45,7 @@ class CommandHandler(
         val aggregate = loadAggregate(command.accountId)
         aggregate.deposit(command.amount)
 
-        persistAndPublish(command.accountId, aggregate)
+        persistAndPublish(aggregate)
     }
 
     fun handleWithdraw(command: WithdrawCommand) {
@@ -51,7 +54,7 @@ class CommandHandler(
         val aggregate = loadAggregate(command.accountId)
         aggregate.withdraw(command.amount)
 
-        persistAndPublish(command.accountId, aggregate)
+        persistAndPublish(aggregate)
     }
 
     fun handleTransfer(command: TransferCommand) {
@@ -60,7 +63,7 @@ class CommandHandler(
         val aggregate = loadAggregate(command.fromAccountId)
         aggregate.transfer(command.toAccountId, command.amount)
 
-        persistAndPublish(command.fromAccountId, aggregate)
+        persistAndPublish(aggregate)
     }
 
     private fun loadAggregate(accountId: String): AccountAggregate {
@@ -79,10 +82,34 @@ class CommandHandler(
         return aggregate
     }
 
-    private fun persistAndPublish(
-        accountId: String,
-        aggregate: AccountAggregate,
-    ) {
+    fun handleDeleteAccount(command: DeleteAccountCommand) {
+        logger.info { "Processing DeleteAccountCommand: $command" }
+
+        val aggregate = AccountAggregate(command.accountId)
+
+        if (aggregate.exists()) {
+            aggregate.deleteAccount()
+            persistAndPublish(aggregate)
+            snapshotStore.delete(aggregate)
+        }
+    }
+
+    private fun AccountAggregate.exists(): Boolean {
+        val snapshotExists = snapshotStore.findByAggregateId(accountId) != null
+        if (snapshotExists) {
+            return true
+        }
+        val accountEvents =
+            eventStore.findAllByAggregateIdAndTypeIn(
+                aggregateId = accountId,
+                types = listOf(AccountCreatedEvent::class, AccountDeletedEvent::class),
+            )
+        val accountHasBeenCreated = accountEvents.count { it is AccountCreatedEvent } == 1
+        val accountHasNotBeenDeleted = accountEvents.count { it is AccountDeletedEvent } == 0
+        return accountHasBeenCreated && accountHasNotBeenDeleted
+    }
+
+    private fun persistAndPublish(aggregate: AccountAggregate) {
         val newEvents = aggregate.getUncommittedEvents()
         if (newEvents.isEmpty()) {
             logger.debug("Empty events list. Skipping updates")
@@ -94,14 +121,14 @@ class CommandHandler(
             eventStore.saveAll(newEvents)
             eventPublisher.publishAll(newEvents)
 
-            if (createSnapshotStrategy.shouldCreateSnapshot(accountId)) {
+            if (createSnapshotStrategy.shouldCreateSnapshot(aggregate)) {
                 snapshotStore.save(aggregate)
             }
 
-            logger.info { "Successfully processed events for aggregate $accountId" }
+            logger.info { "Successfully processed events for aggregate ${aggregate.accountId}" }
             aggregate.markEventsCommitted()
         } catch (ex: Exception) {
-            logger.error(ex) { "Failed to process events for aggregate $accountId" }
+            logger.error(ex) { "Failed to process events for aggregate ${aggregate.accountId}" }
             throw EventProcessingException("Failed to process events", ex)
         }
     }

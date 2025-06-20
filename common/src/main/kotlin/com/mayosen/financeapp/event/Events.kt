@@ -33,3 +33,9 @@ data class WithdrawalPerformedEvent(
     override val timestamp: Instant = Instant.now(),
     val amount: BigDecimal,
 ) : Event
+
+data class AccountDeletedEvent(
+    override val eventId: String,
+    override val aggregateId: String,
+    override val timestamp: Instant = Instant.now(),
+) : Event

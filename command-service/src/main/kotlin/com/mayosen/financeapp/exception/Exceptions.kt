@@ -24,3 +24,7 @@ class EventProcessingException(
     message: String,
     cause: Throwable?,
 ) : BusinessException(message, cause)
+
+class AccountNotFoundException(
+    accountId: String,
+) : BusinessException("Account not found: $accountId")

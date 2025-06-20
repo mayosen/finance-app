@@ -9,4 +9,6 @@ interface SnapshotStore {
     fun findByAggregateId(aggregateId: String): AccountSnapshot?
 
     fun save(aggregate: AccountAggregate)
+
+    fun delete(aggregate: AccountAggregate)
 }
