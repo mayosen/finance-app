@@ -1,0 +1,149 @@
+openapi: 3.0.1
+info:
+  title: Command API
+  description: API for account operations
+  version: 1.0.0
+tags:
+  - name: command
+    description: Command API
+paths:
+  /api/v1/commands/accounts:
+    post:
+      tags:
+        - command
+      summary: Create a new account
+      operationId: createAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountRequest'
+      responses:
+        '200':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+  /api/v1/commands/deposit:
+    post:
+      tags:
+        - command
+      summary: Deposit money to account
+      operationId: deposit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepositRequest'
+      responses:
+        '200':
+          description: Deposit completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+  /api/v1/commands/withdraw:
+    post:
+      tags:
+        - command
+      summary: Withdraw money from account
+      operationId: withdraw
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WithdrawRequest'
+      responses:
+        '200':
+          description: Withdrawal completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+  /api/v1/commands/transfer:
+    post:
+      tags:
+        - command
+      summary: Transfer money between accounts
+      operationId: transfer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequest'
+      responses:
+        '200':
+          description: Transfer completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+components:
+  schemas:
+    CreateAccountRequest:
+      type: object
+      properties:
+        ownerId:
+          type: string
+          example: "user123"
+      required:
+        - ownerId
+
+    DepositRequest:
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: "acc123"
+        amount:
+          $ref: '#/components/schemas/DecimalAmount'
+      required:
+        - accountId
+        - amount
+
+    WithdrawRequest:
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: "acc123"
+        amount:
+          $ref: '#/components/schemas/DecimalAmount'
+      required:
+        - accountId
+        - amount
+
+    TransferRequest:
+      type: object
+      properties:
+        fromAccountId:
+          type: string
+          example: "acc123"
+        toAccountId:
+          type: string
+          example: "acc456"
+        amount:
+          $ref: '#/components/schemas/DecimalAmount'
+      required:
+        - fromAccountId
+        - toAccountId
+        - amount
+
+    CommandResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "e1be0f53-007a-4d58-805b-2c5a64fd3ff4"
+      required:
+        - id
+
+    DecimalAmount:
+      type: string
+      format: decimal
+      example: "50.00"

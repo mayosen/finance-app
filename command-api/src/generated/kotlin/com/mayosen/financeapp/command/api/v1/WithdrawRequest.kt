@@ -1,0 +1,18 @@
+package com.mayosen.financeapp.command.api.v1
+
+import com.fasterxml.jackson.annotation.JsonProperty
+import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.Valid
+
+/**
+ *
+ * @param accountId
+ * @param amount
+ */
+data class WithdrawRequest(
+    @Schema(example = "acc123", required = true, description = "")
+    @get:JsonProperty("accountId", required = true) val accountId: String,
+    @field:Valid
+    @Schema(example = "50.00", required = true, description = "")
+    @get:JsonProperty("amount", required = true) val amount: java.math.BigDecimal,
+)
