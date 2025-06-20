@@ -22,7 +22,7 @@ class KafkaEventPublisher(
         val json = objectMapper.writeValueAsString(dto)
         try {
             logger.info("Sending message to topic '$topic': $json")
-            val future = kafkaTemplate.send(topic, event.aggregateId, json)
+            val future = kafkaTemplate.send(topic, event.accountId, json)
             future.whenComplete { sendResult, ex ->
                 if (ex != null) {
                     logger.error(ex) { "Error while publishing $sendResult" }

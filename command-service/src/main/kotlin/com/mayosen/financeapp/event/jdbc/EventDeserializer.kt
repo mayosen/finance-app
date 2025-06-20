@@ -53,7 +53,7 @@ class EventDeserializer(
         val tree = objectMapper.readTree(event.eventFields) as ObjectNode
         // TODO: Сделать так, чтобы при добавлении нового поля тут не забыть проставить
         tree.put(EVENT_ID_FIELD, event.eventId)
-        tree.put(AGGREGATE_ID_FIELD, event.aggregateId)
+        tree.put(ACCOUNT_ID_FIELD, event.accountId)
         tree.put(TIMESTAMP_ID_FIELD, event.timestamp.toEpochMilli())
         return objectMapper.treeToValue(tree, eventType.java)
     }

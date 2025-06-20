@@ -66,7 +66,7 @@ class AccountAggregate(
         val event =
             AccountCreatedEvent(
                 eventId = generateEventId(),
-                aggregateId = accountId,
+                accountId = accountId,
                 ownerId = ownerId,
             )
         applyEventAndStore(event)
@@ -77,7 +77,7 @@ class AccountAggregate(
         val event =
             DepositPerformedEvent(
                 eventId = generateEventId(),
-                aggregateId = accountId,
+                accountId = accountId,
                 amount = amount,
             )
         applyEventAndStore(event)
@@ -91,7 +91,7 @@ class AccountAggregate(
         val event =
             WithdrawalPerformedEvent(
                 eventId = generateEventId(),
-                aggregateId = accountId,
+                accountId = accountId,
                 amount = amount,
             )
         applyEventAndStore(event)
@@ -108,8 +108,8 @@ class AccountAggregate(
         val event =
             TransferPerformedEvent(
                 eventId = generateEventId(),
-                aggregateId = accountId,
-                toAggregateId = toAccountId,
+                accountId = accountId,
+                toAccountId = toAccountId,
                 amount = amount,
             )
         applyEventAndStore(event)
@@ -122,7 +122,7 @@ class AccountAggregate(
         val event =
             AccountDeletedEvent(
                 eventId = generateEventId(),
-                aggregateId = accountId,
+                accountId = accountId,
             )
         applyEventAndStore(event)
     }

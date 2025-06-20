@@ -12,23 +12,22 @@ class JdbcSnapshotStore(
     private val accountSnapshotEntityRepository: AccountSnapshotEntityRepository,
     private val eventEntityRepository: EventEntityRepository,
 ) : SnapshotStore {
-    override fun findByAggregateId(aggregateId: String): AccountSnapshot? =
+    override fun findByAccountId(accountId: String): AccountSnapshot? =
         accountSnapshotEntityRepository
-            .findById(aggregateId)
-            .getOrNull()
-            ?.let {
+            .findById(accountId)
+            .map {
                 AccountSnapshot(
-                    accountId = it.aggregateId,
+                    accountId = it.accountId,
                     balance = it.balance,
                     created = true,
                     lastSequenceNumber = it.lastSequenceNumber,
                     timestamp = it.timestamp,
                 )
-            }
+            }.getOrNull()
 
     override fun save(aggregate: AccountAggregate) {
         val maxSequenceNumber =
-            eventEntityRepository.findMaxSequenceNumberByAggregateId(aggregate.accountId)
+            eventEntityRepository.findMaxSequenceNumberByAccountId(aggregate.accountId)
                 ?: 0
         val isNew = !accountSnapshotEntityRepository.existsById(aggregate.accountId)
         val entity =
@@ -36,7 +35,7 @@ class JdbcSnapshotStore(
                 .toSnapshot(maxSequenceNumber)
                 .let {
                     AccountSnapshotEntity(
-                        aggregateId = it.accountId,
+                        accountId = it.accountId,
                         balance = it.balance,
                         lastSequenceNumber = it.lastSequenceNumber,
                         isNewEntity = isNew,

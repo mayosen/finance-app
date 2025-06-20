@@ -6,15 +6,15 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface EventEntityRepository : CrudRepository<EventEntity, String> {
-    fun countByAggregateId(aggregateId: String): Int
+    fun countByAccountId(accountId: String): Int
 
-    fun findAllByAggregateId(aggregateId: String): List<EventEntity>
+    fun findAllByAccountId(accountId: String): List<EventEntity>
 
-    fun findAllByAggregateIdAndSequenceNumberGreaterThan(
-        aggregateId: String,
+    fun findAllByAccountIdAndSequenceNumberGreaterThan(
+        accountId: String,
         sequenceNumber: Long,
     ): List<EventEntity>
 
-    @Query("SELECT MAX(sequence_number) FROM event WHERE aggregate_id = :aggregateId ")
-    fun findMaxSequenceNumberByAggregateId(aggregateId: String): Long?
+    @Query("SELECT MAX(sequence_number) FROM event WHERE account_id = :accountId ")
+    fun findMaxSequenceNumberByAccountId(accountId: String): Long?
 }

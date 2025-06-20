@@ -12,7 +12,7 @@ class CreateSnapshotByTimesStrategy(
     private val eventStore: EventStore,
 ) : CreateSnapshotStrategy {
     override fun shouldCreateSnapshot(aggregate: AccountAggregate): Boolean {
-        val totalEvents = eventStore.countByAggregateId(aggregate.accountId)
+        val totalEvents = eventStore.countByAccountId(aggregate.accountId)
         return aggregate.created && totalEvents % timesNumber == 0
     }
 }

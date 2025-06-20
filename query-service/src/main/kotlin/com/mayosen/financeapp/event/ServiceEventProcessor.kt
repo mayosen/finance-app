@@ -21,10 +21,10 @@ class ServiceEventProcessor(
 
     fun processResetReadModel(event: ResetReadModelEvent) {
         // TODO: Block rows
-        logger.info { "Deleting projections for accountId='${event.aggregateId}'. Event: $event" }
+        logger.info { "Deleting projections for accountId='${event.accountId}'. Event: $event" }
         transactionTemplate.executeWithoutResult {
-            accountSummaryStore.deleteByAccountId(event.aggregateId)
-            transactionHistoryStore.deleteAllByAccountId(event.aggregateId)
+            accountSummaryStore.deleteByAccountId(event.accountId)
+            transactionHistoryStore.deleteAllByAccountId(event.accountId)
         }
     }
 

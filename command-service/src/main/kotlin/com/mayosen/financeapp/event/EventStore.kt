@@ -6,17 +6,17 @@ import kotlin.reflect.KClass
  * Хранилище событий
  */
 interface EventStore {
-    fun countByAggregateId(aggregateId: String): Int
+    fun countByAccountId(accountId: String): Int
 
-    fun findAllByAggregateId(aggregateId: String): List<Event>
+    fun findAllByAccountId(accountId: String): List<Event>
 
-    fun findAllByAggregateIdAfterSequenceNumber(
-        aggregateId: String,
+    fun findAllByAccountIdAfterSequenceNumber(
+        accountId: String,
         sequenceNumber: Long,
     ): List<Event>
 
-    fun findAllByAggregateIdAndTypeIn(
-        aggregateId: String,
+    fun findAllByAccountIdAndTypeIn(
+        accountId: String,
         types: List<KClass<out Event>>,
     ): List<Event>
 

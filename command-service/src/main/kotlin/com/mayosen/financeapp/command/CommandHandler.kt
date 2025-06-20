@@ -67,15 +67,15 @@ class CommandHandler(
     }
 
     private fun loadAggregate(accountId: String): AccountAggregate {
-        val snapshot = snapshotStore.findByAggregateId(accountId)
+        val snapshot = snapshotStore.findByAccountId(accountId)
         val aggregate = AccountAggregate(accountId)
         val events: List<Event>
 
         if (snapshot != null) {
             aggregate.loadFromSnapshot(snapshot)
-            events = eventStore.findAllByAggregateIdAfterSequenceNumber(accountId, snapshot.lastSequenceNumber)
+            events = eventStore.findAllByAccountIdAfterSequenceNumber(accountId, snapshot.lastSequenceNumber)
         } else {
-            events = eventStore.findAllByAggregateId(accountId)
+            events = eventStore.findAllByAccountId(accountId)
         }
 
         aggregate.loadFromHistory(events)
@@ -95,13 +95,13 @@ class CommandHandler(
     }
 
     private fun AccountAggregate.exists(): Boolean {
-        val snapshotExists = snapshotStore.findByAggregateId(accountId) != null
+        val snapshotExists = snapshotStore.findByAccountId(accountId) != null
         if (snapshotExists) {
             return true
         }
         val accountEvents =
-            eventStore.findAllByAggregateIdAndTypeIn(
-                aggregateId = accountId,
+            eventStore.findAllByAccountIdAndTypeIn(
+                accountId = accountId,
                 types = listOf(AccountCreatedEvent::class, AccountDeletedEvent::class),
             )
         val accountHasBeenCreated = accountEvents.count { it is AccountCreatedEvent } == 1
@@ -125,10 +125,10 @@ class CommandHandler(
                 snapshotStore.save(aggregate)
             }
 
-            logger.info { "Successfully processed events for aggregate ${aggregate.accountId}" }
+            logger.info { "Successfully processed events for account ${aggregate.accountId}" }
             aggregate.markEventsCommitted()
         } catch (ex: Exception) {
-            logger.error(ex) { "Failed to process events for aggregate ${aggregate.accountId}" }
+            logger.error(ex) { "Failed to process events for account ${aggregate.accountId}" }
             throw EventProcessingException("Failed to process events", ex)
         }
     }

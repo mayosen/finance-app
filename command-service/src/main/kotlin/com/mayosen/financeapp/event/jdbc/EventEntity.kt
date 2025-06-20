@@ -14,7 +14,7 @@ class EventEntity(
     @Id
     val eventId: String,
     val sequenceNumber: Long,
-    val aggregateId: String,
+    val accountId: String,
     val eventType: String,
     val eventFields: String,
     val timestamp: Instant,
@@ -26,14 +26,14 @@ class EventEntity(
     constructor(
         eventId: String,
         sequenceNumber: Long,
-        aggregateId: String,
+        accountId: String,
         eventType: String,
         eventFields: String,
         timestamp: Instant,
     ) : this(
         eventId = eventId,
         sequenceNumber = sequenceNumber,
-        aggregateId = aggregateId,
+        accountId = accountId,
         eventType = eventType,
         eventFields = eventFields,
         timestamp = timestamp,

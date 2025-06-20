@@ -97,17 +97,17 @@ class AccountAggregateTest {
                 listOf(
                     AccountCreatedEvent(
                         eventId = EVENT_ID,
-                        aggregateId = ACCOUNT_ID,
+                        accountId = ACCOUNT_ID,
                         ownerId = OWNER_ID,
                     ),
                     DepositPerformedEvent(
                         eventId = EVENT_ID,
-                        aggregateId = ACCOUNT_ID,
+                        accountId = ACCOUNT_ID,
                         amount = BALANCE_100,
                     ),
                     WithdrawalPerformedEvent(
                         eventId = EVENT_ID,
-                        aggregateId = ACCOUNT_ID,
+                        accountId = ACCOUNT_ID,
                         amount = BALANCE_50,
                     ),
                 )

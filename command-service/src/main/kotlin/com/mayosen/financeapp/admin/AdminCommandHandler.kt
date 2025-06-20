@@ -16,9 +16,9 @@ class AdminCommandHandler(
         val resetReadModelEvent =
             ResetReadModelEvent(
                 eventId = generateEventId(),
-                aggregateId = command.accountId,
+                accountId = command.accountId,
             )
-        val businessEvents = eventStore.findAllByAggregateId(command.accountId)
+        val businessEvents = eventStore.findAllByAccountId(command.accountId)
         eventPublisher.publish(resetReadModelEvent)
         eventPublisher.publishAll(businessEvents)
     }

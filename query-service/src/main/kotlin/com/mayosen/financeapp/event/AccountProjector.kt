@@ -38,7 +38,7 @@ class AccountProjector(
         logger.info { "Creating account summary. Event: $event" }
         val summary =
             AccountSummary(
-                accountId = event.aggregateId,
+                accountId = event.accountId,
                 balance = BigDecimal.ZERO,
                 ownerId = event.ownerId,
                 updatedAt = event.timestamp,
@@ -49,8 +49,8 @@ class AccountProjector(
     private fun applyDepositPerformed(event: DepositPerformedEvent) {
         logger.info { "Updating account summary. Adding transaction. Event: $event" }
         val summary =
-            accountSummaryStore.findByAccountId(event.aggregateId)
-                ?: throw IllegalStateException("Account not found: ${event.aggregateId}")
+            accountSummaryStore.findByAccountId(event.accountId)
+                ?: throw IllegalStateException("Account not found: ${event.accountId}")
         val updated =
             summary.copy(
                 balance = summary.balance + event.amount,
@@ -64,8 +64,8 @@ class AccountProjector(
     private fun applyWithdrawalPerformed(event: WithdrawalPerformedEvent) {
         logger.info { "Updating account summary. Adding transaction. Event: $event" }
         val summary =
-            accountSummaryStore.findByAccountId(event.aggregateId)
-                ?: throw IllegalStateException("Account not found: ${event.aggregateId}")
+            accountSummaryStore.findByAccountId(event.accountId)
+                ?: throw IllegalStateException("Account not found: ${event.accountId}")
         val updated =
             summary.copy(
                 balance = summary.balance - event.amount,
@@ -79,11 +79,11 @@ class AccountProjector(
     private fun applyTransferPerformed(event: TransferPerformedEvent) {
         logger.info { "Updating accounts summary. Adding transactions to accounts. Event: $event" }
         val source =
-            accountSummaryStore.findByAccountId(event.aggregateId)
-                ?: throw IllegalStateException("Source account not found: ${event.aggregateId}")
+            accountSummaryStore.findByAccountId(event.accountId)
+                ?: throw IllegalStateException("Source account not found: ${event.accountId}")
         val destination =
-            accountSummaryStore.findByAccountId(event.toAggregateId)
-                ?: throw IllegalStateException("Destination account not found: ${event.aggregateId}")
+            accountSummaryStore.findByAccountId(event.toAccountId)
+                ?: throw IllegalStateException("Destination account not found: ${event.accountId}")
 
         val updatedSource =
             source.copy(
@@ -105,7 +105,7 @@ class AccountProjector(
 
     private fun DepositPerformedEvent.toTransaction(): Transaction =
         Transaction(
-            accountId = aggregateId,
+            accountId = accountId,
             sourceEventId = eventId,
             transactionId = IdGenerator.generateTransactionId(),
             type = TransactionType.DEPOSIT,
@@ -116,7 +116,7 @@ class AccountProjector(
 
     private fun WithdrawalPerformedEvent.toTransaction(): Transaction =
         Transaction(
-            accountId = aggregateId,
+            accountId = accountId,
             sourceEventId = eventId,
             transactionId = IdGenerator.generateTransactionId(),
             type = TransactionType.WITHDRAWAL,
@@ -128,33 +128,33 @@ class AccountProjector(
     @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
     private fun TransferPerformedEvent.toSourceTransaction(): Transaction =
         Transaction(
-            accountId = aggregateId,
+            accountId = accountId,
             sourceEventId = eventId,
             transactionId = IdGenerator.generateTransactionId(),
             type = TransactionType.TRANSFER_OUT,
             amount = amount,
             timestamp = timestamp,
-            relatedAccountId = aggregateId!!,
+            relatedAccountId = accountId!!,
         )
 
     @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
     private fun TransferPerformedEvent.toDestinationTransaction(): Transaction =
         Transaction(
-            accountId = aggregateId,
+            accountId = accountId,
             sourceEventId = eventId,
             transactionId = IdGenerator.generateTransactionId(),
             type = TransactionType.TRANSFER_IN,
             amount = this.amount,
             timestamp = this.timestamp,
-            relatedAccountId = toAggregateId!!,
+            relatedAccountId = toAccountId!!,
         )
 
     private fun applyAccountDeleted(event: AccountDeletedEvent) {
         logger.info { "Deleting account summary, deleting transactions. Event: $event" }
 
         transactionTemplate.executeWithoutResult {
-            accountSummaryStore.deleteByAccountId(event.aggregateId)
-            transactionHistoryStore.deleteAllByAccountId(event.aggregateId)
+            accountSummaryStore.deleteByAccountId(event.accountId)
+            transactionHistoryStore.deleteAllByAccountId(event.accountId)
         }
     }
 

@@ -86,4 +86,4 @@ databaseChangeLog:
         - addUniqueConstraint:
             tableName: transaction_view
             columnNames: source_event_id, type
-            constraintName: unique-event_id-type
+            constraintName: unique-source_event_id-type

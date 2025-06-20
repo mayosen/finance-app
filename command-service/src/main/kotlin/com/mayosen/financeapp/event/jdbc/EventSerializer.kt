@@ -22,7 +22,7 @@ class EventSerializer(
         return EventEntity(
             eventId = event.eventId,
             sequenceNumber = sequenceNumber,
-            aggregateId = event.aggregateId,
+            accountId = event.accountId,
             eventType = event::class.qualifiedName!!,
             eventFields = eventFields,
             timestamp = event.timestamp,
