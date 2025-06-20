@@ -31,7 +31,9 @@ class JdbcEventStore(
         accountId: String,
         types: List<KClass<out Event>>,
     ): List<Event> {
-        TODO("Not yet implemented")
+        val eventTypes = types.map { eventSerializer.getEventType(it) }
+        val entities = eventEntityRepository.findAllByAccountIdAndEventTypeIn(accountId, eventTypes)
+        return entities.map { eventDeserializer.deserialize(it) }
     }
 
     override fun save(event: Event) {

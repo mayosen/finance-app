@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.mayosen.financeapp.event.Event
 import org.springframework.stereotype.Component
+import kotlin.reflect.KClass
 
 @Component
 class EventSerializer(
@@ -23,10 +24,12 @@ class EventSerializer(
             eventId = event.eventId,
             sequenceNumber = sequenceNumber,
             accountId = event.accountId,
-            eventType = event::class.qualifiedName!!,
+            eventType = getEventType(event::class),
             eventFields = eventFields,
             timestamp = event.timestamp,
             isNewEntity = isNew,
         )
     }
+
+    fun getEventType(type: KClass<out Event>): String = type.qualifiedName!!
 }

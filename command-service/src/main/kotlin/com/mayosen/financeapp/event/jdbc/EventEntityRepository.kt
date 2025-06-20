@@ -15,6 +15,11 @@ interface EventEntityRepository : CrudRepository<EventEntity, String> {
         sequenceNumber: Long,
     ): List<EventEntity>
 
+    fun findAllByAccountIdAndEventTypeIn(
+        accountId: String,
+        eventTypes: List<String>,
+    ): List<EventEntity>
+
     @Query("SELECT MAX(sequence_number) FROM event WHERE account_id = :accountId ")
     fun findMaxSequenceNumberByAccountId(accountId: String): Long?
 }
