@@ -36,7 +36,7 @@ interface CommandApi {
     )
     @RequestMapping(
         method = [RequestMethod.POST],
-        value = ["/api/v1/commands/accounts"],
+        value = ["/command-api/v1/commands/accounts"],
         produces = ["application/json"],
         consumes = ["application/json"],
     )
@@ -62,7 +62,7 @@ interface CommandApi {
     )
     @RequestMapping(
         method = [RequestMethod.POST],
-        value = ["/api/v1/commands/deposit"],
+        value = ["/command-api/v1/commands/deposit"],
         produces = ["application/json"],
         consumes = ["application/json"],
     )
@@ -88,7 +88,7 @@ interface CommandApi {
     )
     @RequestMapping(
         method = [RequestMethod.POST],
-        value = ["/api/v1/commands/transfer"],
+        value = ["/command-api/v1/commands/transfer"],
         produces = ["application/json"],
         consumes = ["application/json"],
     )
@@ -114,7 +114,7 @@ interface CommandApi {
     )
     @RequestMapping(
         method = [RequestMethod.POST],
-        value = ["/api/v1/commands/withdraw"],
+        value = ["/command-api/v1/commands/withdraw"],
         produces = ["application/json"],
         consumes = ["application/json"],
     )

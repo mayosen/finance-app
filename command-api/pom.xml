@@ -90,12 +90,13 @@
                         <version>${openapi-generator-maven-plugin.version}</version>
                         <executions>
                             <execution>
-                                <id>generate-api-v1</id>
+                                <id>generate-command-api-v1</id>
                                 <goals>
                                     <goal>generate</goal>
                                 </goals>
                                 <configuration>
-                                    <inputSpec>${project.basedir}/src/main/resources/openapi/command-api.yml</inputSpec>
+                                    <inputSpec>${project.basedir}/src/main/resources/openapi/command-api-v1.yml
+                                    </inputSpec>
                                     <output>${project.basedir}</output>
                                     <generatorName>kotlin-spring</generatorName>
                                     <generateSupportingFiles>false</generateSupportingFiles>
@@ -120,7 +121,8 @@
                                     <goal>generate</goal>
                                 </goals>
                                 <configuration>
-                                    <inputSpec>${project.basedir}/src/main/resources/openapi/admin-api.yml</inputSpec>
+                                    <inputSpec>${project.basedir}/src/main/resources/openapi/admin-api-v1.yml
+                                    </inputSpec>
                                     <output>${project.basedir}</output>
                                     <generatorName>kotlin-spring</generatorName>
                                     <generateSupportingFiles>false</generateSupportingFiles>

@@ -9,13 +9,16 @@ import com.mayosen.financeapp.query.api.GetTransactionHistoryResponse
 import com.mayosen.financeapp.query.api.ListAccountsQuery
 import com.mayosen.financeapp.query.api.ListAccountsResponse
 import com.mayosen.financeapp.query.api.QueryGateway
-import com.mayosen.financeapp.query.api.v1.GetAccountSummaryResponse as GetAccountSummaryApiResponse
-import com.mayosen.financeapp.query.api.v1.GetTransactionHistoryResponse as GetTransactionHistoryApiResponse
-import com.mayosen.financeapp.query.api.v1.ListAccountsResponse as ListAccountsApiResponse
+import com.mayosen.financeapp.query.api.v1.Account
 import com.mayosen.financeapp.query.api.v1.QueryApi
+import com.mayosen.financeapp.query.api.v1.Transaction
+import com.mayosen.financeapp.query.api.v1.TransactionType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import java.time.Instant
+import com.mayosen.financeapp.query.api.v1.GetAccountSummaryResponse as GetAccountSummaryApiResponse
+import com.mayosen.financeapp.query.api.v1.GetTransactionHistoryResponse as GetTransactionHistoryApiResponse
+import com.mayosen.financeapp.query.api.v1.ListAccountsResponse as ListAccountsApiResponse
 
 @RestController
 class QueryController(
@@ -28,10 +31,10 @@ class QueryController(
         return ResponseEntity.ok(apiResponse)
     }
 
-    fun ListAccountsResponse.toApiResponse(): ListAccountsApiResponse {
+    private fun ListAccountsResponse.toApiResponse(): ListAccountsApiResponse {
         val accounts =
             accounts.map {
-                ListAccountsApiResponse.Account(
+                Account(
                     accountId = it.accountId,
                     balance = it.balance,
                     updatedAt = it.updatedAt,
@@ -40,7 +43,7 @@ class QueryController(
         return ListAccountsApiResponse(accounts)
     }
 
-    override fun getAccount(accountId: String): ResponseEntity<GetAccountSummaryApiResponse> {
+    override fun getAccountSummary(accountId: String): ResponseEntity<GetAccountSummaryApiResponse> {
         val query = GetAccountSummaryQuery(accountId)
         val queryResponse: GetAccountSummaryResponse = queryGateway.query(query)
         val apiResponse = queryResponse.toApiResponse()
@@ -59,8 +62,8 @@ class QueryController(
         accountId: String,
         timeFrom: Instant?,
         timeTo: Instant?,
-        pageOffset: Int?,
-        pageLimit: Int?,
+        pageOffset: Int,
+        pageLimit: Int,
     ): ResponseEntity<GetTransactionHistoryApiResponse> {
         val timePeriod: TimePeriod? =
             if (timeFrom != null || timeTo != null) {
@@ -71,11 +74,7 @@ class QueryController(
             } else {
                 null
             }
-        val pagination =
-            Pagination(
-                offset = pageOffset ?: DEFAULT_PAGE_OFFSET,
-                limit = pageLimit ?: DEFAULT_PAGE_LIMIT,
-            )
+        val pagination = Pagination(offset = pageOffset, limit = pageLimit)
         val query =
             GetTransactionHistoryQuery(
                 accountId = accountId,
@@ -95,18 +94,18 @@ class QueryController(
         )
     }
 
-    private fun GetTransactionHistoryResponse.Transaction.toTransaction(): GetTransactionHistoryApiResponse.Transaction =
-        GetTransactionHistoryApiResponse.Transaction(
+    private fun GetTransactionHistoryResponse.Transaction.toTransaction(): Transaction =
+        Transaction(
             transactionId = transactionId,
             // TODO: Map explicitly
-            type = GetTransactionHistoryApiResponse.TransactionType.valueOf(type.name),
+            type = TransactionType.valueOf(type.name),
             amount = amount,
             timestamp = timestamp,
             relatedAccountId = relatedAccountId,
         )
 
     private fun GetTransactionHistoryResponse.Pagination.toPagination() =
-        GetTransactionHistoryApiResponse.Pagination(
+        com.mayosen.financeapp.query.api.v1.Pagination(
             hasMore = hasMore,
             total = total,
         )
