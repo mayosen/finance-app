@@ -1,6 +1,8 @@
 package com.mayosen.financeapp.test.context
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.mayosen.financeapp.test.context.initializer.KafkaTestContainerInitializer
+import com.mayosen.financeapp.test.context.initializer.PostgresqlTestContainerInitializer
 import com.mayosen.financeapp.test.context.kafka.KafkaTestProducerConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -13,7 +15,7 @@ import org.springframework.test.web.servlet.MockMvc
 
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@SpringBootTest(classes = [KafkaTestProducerConfiguration::class])
+@SpringBootTest(classes = [TestBeanDefinitions::class, KafkaTestProducerConfiguration::class])
 @ContextConfiguration(initializers = [PostgresqlTestContainerInitializer::class, KafkaTestContainerInitializer::class])
 class BaseIntegrationTest {
     @Autowired

@@ -1,9 +1,11 @@
 package com.mayosen.financeapp.util
 
-import java.util.*
+interface IdGenerator {
+    fun generateTransactionId(): String
 
-object IdGenerator {
-    fun generateTransactionId(): String = generateId()
+    @Deprecated("Unused?")
+    fun generateEventId(): String
 
-    private fun generateId(): String = UUID.randomUUID().toString()
+    @Deprecated("Unused?")
+    fun generateAccountId(): String
 }

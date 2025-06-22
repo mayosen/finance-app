@@ -1,4 +1,4 @@
-package com.mayosen.financeapp.test.context
+package com.mayosen.financeapp.test.util
 
 import com.mayosen.financeapp.test.ACCOUNT_ID
 import com.mayosen.financeapp.test.COMMAND_ID

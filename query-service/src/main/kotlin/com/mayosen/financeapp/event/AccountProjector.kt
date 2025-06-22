@@ -21,6 +21,7 @@ class AccountProjector(
     private val accountSummaryStore: AccountSummaryStore,
     private val transactionHistoryStore: TransactionHistoryStore,
     private val transactionTemplate: TransactionTemplate,
+    private val idGenerator: IdGenerator,
 ) {
     fun project(event: Event) {
         // TODO: Check if event is already applied in read model. Do not process it twice.
@@ -107,7 +108,7 @@ class AccountProjector(
         Transaction(
             accountId = accountId,
             sourceEventId = eventId,
-            transactionId = IdGenerator.generateTransactionId(),
+            transactionId = idGenerator.generateTransactionId(),
             type = TransactionType.DEPOSIT,
             amount = amount,
             timestamp = timestamp,
@@ -118,7 +119,7 @@ class AccountProjector(
         Transaction(
             accountId = accountId,
             sourceEventId = eventId,
-            transactionId = IdGenerator.generateTransactionId(),
+            transactionId = idGenerator.generateTransactionId(),
             type = TransactionType.WITHDRAWAL,
             amount = amount,
             timestamp = timestamp,
@@ -130,7 +131,7 @@ class AccountProjector(
         Transaction(
             accountId = accountId,
             sourceEventId = eventId,
-            transactionId = IdGenerator.generateTransactionId(),
+            transactionId = idGenerator.generateTransactionId(),
             type = TransactionType.TRANSFER_OUT,
             amount = amount,
             timestamp = timestamp,
@@ -142,10 +143,10 @@ class AccountProjector(
         Transaction(
             accountId = accountId,
             sourceEventId = eventId,
-            transactionId = IdGenerator.generateTransactionId(),
+            transactionId = idGenerator.generateTransactionId(),
             type = TransactionType.TRANSFER_IN,
-            amount = this.amount,
-            timestamp = this.timestamp,
+            amount = amount,
+            timestamp = timestamp,
             relatedAccountId = toAccountId!!,
         )
 
