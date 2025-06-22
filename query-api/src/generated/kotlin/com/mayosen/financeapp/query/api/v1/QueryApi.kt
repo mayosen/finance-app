@@ -34,7 +34,7 @@ interface QueryApi {
     )
     @RequestMapping(
         method = [RequestMethod.GET],
-        value = ["/api/v1/queries/accounts/{accountId}"],
+        value = ["/query-api/v1/accounts/summary"],
         produces = ["application/json"],
     )
     fun getAccountSummary(
@@ -59,7 +59,7 @@ interface QueryApi {
     )
     @RequestMapping(
         method = [RequestMethod.GET],
-        value = ["/api/v1/queries/accounts/{accountId}/transactions"],
+        value = ["/query-api/v1/transactions"],
         produces = ["application/json"],
     )
     fun getTransactions(
@@ -99,7 +99,7 @@ interface QueryApi {
     )
     @RequestMapping(
         method = [RequestMethod.GET],
-        value = ["/api/v1/queries/accounts"],
+        value = ["/query-api/v1/accounts"],
         produces = ["application/json"],
     )
     fun listAccounts(

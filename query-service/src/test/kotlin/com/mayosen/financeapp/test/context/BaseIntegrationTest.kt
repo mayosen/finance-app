@@ -29,4 +29,6 @@ class BaseIntegrationTest {
 
     @Autowired
     protected lateinit var eventKafkaTemplate: KafkaTemplate<String, String>
+
+    protected fun stringBodyOf(body: Any): String = objectMapper.writeValueAsString(body)
 }

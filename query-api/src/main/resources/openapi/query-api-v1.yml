@@ -7,7 +7,7 @@ tags:
   - name: query
     description: Query API
 paths:
-  /api/v1/queries/accounts:
+  /query-api/v1/accounts:
     get:
       tags:
         - query
@@ -28,7 +28,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListAccountsResponse'
 
-  /api/v1/queries/accounts/{accountId}:
+  /query-api/v1/accounts/summary:
     get:
       tags:
         - query
@@ -44,7 +44,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetAccountSummaryResponse'
 
-  /api/v1/queries/accounts/{accountId}/transactions:
+  /query-api/v1/transactions:
     get:
       tags:
         - query
