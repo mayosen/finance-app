@@ -1,13 +1,9 @@
 package com.mayosen.financeapp.util
 
-import java.util.*
+interface IdGenerator {
+    fun generateCommandId(): String
 
-object IdGenerator {
-    fun generateCommandId(): String = generateId()
+    fun generateEventId(): String
 
-    fun generateEventId(): String = generateId()
-
-    fun generateAccountId(): String = generateId()
-
-    private fun generateId(): String = UUID.randomUUID().toString()
+    fun generateAccountId(): String
 }

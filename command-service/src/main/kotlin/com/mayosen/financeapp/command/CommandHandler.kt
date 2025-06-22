@@ -14,7 +14,7 @@ import com.mayosen.financeapp.event.EventStore
 import com.mayosen.financeapp.exception.EventProcessingException
 import com.mayosen.financeapp.snapshot.CreateSnapshotStrategy
 import com.mayosen.financeapp.snapshot.SnapshotStore
-import com.mayosen.financeapp.util.IdGenerator.generateAccountId
+import com.mayosen.financeapp.util.IdGenerator
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
 
@@ -27,12 +27,13 @@ class CommandHandler(
     private val snapshotStore: SnapshotStore,
     private val eventPublisher: EventPublisher,
     private val createSnapshotStrategy: CreateSnapshotStrategy,
+    private val idGenerator: IdGenerator,
 ) {
     fun handleCreateAccount(command: CreateAccountCommand) {
         logger.info { "Processing CreateAccountCommand: $command" }
 
-        val accountId = generateAccountId()
-        val aggregate = AccountAggregate(accountId)
+        val accountId = idGenerator.generateAccountId()
+        val aggregate = AccountAggregate(accountId, idGenerator)
 
         aggregate.createAccount(command.ownerId)
 
@@ -68,7 +69,7 @@ class CommandHandler(
 
     private fun loadAggregate(accountId: String): AccountAggregate {
         val snapshot = snapshotStore.findByAccountId(accountId)
-        val aggregate = AccountAggregate(accountId)
+        val aggregate = AccountAggregate(accountId, idGenerator)
         val events: List<Event>
 
         if (snapshot != null) {
@@ -85,7 +86,7 @@ class CommandHandler(
     fun handleDeleteAccount(command: DeleteAccountCommand) {
         logger.info { "Processing DeleteAccountCommand: $command" }
 
-        val aggregate = AccountAggregate(command.accountId)
+        val aggregate = AccountAggregate(command.accountId, idGenerator)
 
         if (aggregate.exists()) {
             aggregate.deleteAccount()

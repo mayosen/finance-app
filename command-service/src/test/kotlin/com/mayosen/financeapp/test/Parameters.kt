@@ -1,12 +1,18 @@
 package com.mayosen.financeapp.test
 
+import com.mayosen.financeapp.test.util.toCurrency
 import java.math.BigDecimal
 import java.time.Instant
 
-const val OWNER_ID = "owner"
-const val ACCOUNT_ID = "ec6fdd75-541b-489a-9e92-c9f48b7ced52"
-const val EVENT_ID = "3f8d9fe6-4b41-4abb-9840-98b99426dcc6"
+// Command
+const val COMMAND_ID = "command_id"
 
+// CreateAccountCommand
+const val OWNER_ID = "owner_id"
+const val ACCOUNT_ID = "account_id"
+
+// Event
+const val EVENT_ID = "event_id"
 const val LAST_SEQUENCE_NUMBER = 0L
 
 val BALANCE_100 = 100.toBigDecimal().toCurrency()

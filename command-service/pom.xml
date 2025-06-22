@@ -98,6 +98,11 @@
             <artifactId>kafka</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.json-unit</groupId>
+            <artifactId>json-unit-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

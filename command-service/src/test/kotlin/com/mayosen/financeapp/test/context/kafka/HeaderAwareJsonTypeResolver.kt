@@ -2,7 +2,7 @@ package com.mayosen.financeapp.test.context.kafka
 
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.mayosen.financeapp.event.EVENT_TYPE_KEY
+import com.mayosen.financeapp.event.serialization.EVENT_TYPE_KEY
 import org.apache.kafka.common.header.Headers
 import org.springframework.kafka.support.serializer.JsonTypeResolver
 

@@ -37,18 +37,18 @@ class KafkaTestConsumerConfiguration {
 
     @Bean
     fun eventsMessageListenerContainer(
-        eventsCustomer: KafkaTestConsumer<EventDto>,
         headerAwareJsonTypeResolver: HeaderAwareJsonTypeResolver,
+        eventsConsumer: KafkaTestConsumer<EventDto>,
     ): MessageListenerContainer {
         val consumerFactory: ConsumerFactory<String, EventDto> = createConsumerFactory(headerAwareJsonTypeResolver)
-        val messageListener: MessageListener<String, EventDto> = MessageListener(eventsCustomer::capture)
+        val messageListener: MessageListener<String, EventDto> = MessageListener(eventsConsumer::capture)
         return createMessageListenerContainer(consumerFactory, messageListener)
     }
 
     private fun createConsumerFactory(typeResolver: JsonTypeResolver): ConsumerFactory<String, EventDto> {
         val consumerConfig = getConsumerConfig()
         val keyDeserializer = StringDeserializer()
-        val valueDeserializer = getDeserializer(typeResolver)
+        val valueDeserializer = getValueDeserializer(typeResolver)
         return DefaultKafkaConsumerFactory(consumerConfig, keyDeserializer, valueDeserializer)
     }
 
@@ -60,7 +60,7 @@ class KafkaTestConsumerConfiguration {
         return props
     }
 
-    private fun getDeserializer(typeResolver: JsonTypeResolver): Deserializer<EventDto> {
+    private fun getValueDeserializer(typeResolver: JsonTypeResolver): Deserializer<EventDto> {
         val jsonDeserializer =
             JsonDeserializer(EventDto::class.java, objectMapper).apply {
                 setTypeResolver(typeResolver)
@@ -74,12 +74,11 @@ class KafkaTestConsumerConfiguration {
         messageListener: MessageListener<K, V>,
     ): MessageListenerContainer {
         val topic = "financeapp-events"
-        val containerProperties =
-            ContainerProperties(
-                TopicPartitionOffset(topic, 0, 0L),
-            )
-        val messageListenerContainer = KafkaMessageListenerContainer(consumerFactory, containerProperties)
-        messageListenerContainer.setupMessageListener(messageListener)
+        val topicPartitionOffset = TopicPartitionOffset(topic, 0, 0L)
+        val containerProperties = ContainerProperties(topicPartitionOffset)
+        val messageListenerContainer =
+            KafkaMessageListenerContainer(consumerFactory, containerProperties)
+                .apply { setupMessageListener(messageListener) }
         return messageListenerContainer
     }
 }

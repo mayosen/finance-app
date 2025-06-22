@@ -3,7 +3,7 @@ package com.mayosen.financeapp.event.jdbc
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.mayosen.financeapp.event.Event
-import com.mayosen.financeapp.event.typeName
+import com.mayosen.financeapp.event.serialization.typeName
 import org.springframework.stereotype.Component
 
 @Component

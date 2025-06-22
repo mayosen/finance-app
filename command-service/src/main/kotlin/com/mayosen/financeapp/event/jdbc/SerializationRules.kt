@@ -6,6 +6,8 @@ const val TIMESTAMP_ID_FIELD = "timestamp"
 
 val EXPLICIT_FIELDS = setOf(EVENT_ID_FIELD, ACCOUNT_ID_FIELD, TIMESTAMP_ID_FIELD)
 
+// TODO: Refactor
+
 // class FieldRule<T>(
 //     private val fieldName: String,
 //     private val valueExtractor: (EventEntity) -> T,

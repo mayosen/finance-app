@@ -12,6 +12,7 @@ import com.mayosen.financeapp.test.BALANCE_50
 import com.mayosen.financeapp.test.EVENT_ID
 import com.mayosen.financeapp.test.LAST_SEQUENCE_NUMBER
 import com.mayosen.financeapp.test.OWNER_ID
+import com.mayosen.financeapp.test.context.TestIdGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.byLessThan
 import org.junit.jupiter.api.BeforeEach
@@ -29,7 +30,7 @@ class AccountAggregateTest {
 
     @BeforeEach
     fun setup() {
-        aggregate = AccountAggregate(ACCOUNT_ID)
+        aggregate = AccountAggregate(ACCOUNT_ID, TestIdGenerator)
     }
 
     @Nested

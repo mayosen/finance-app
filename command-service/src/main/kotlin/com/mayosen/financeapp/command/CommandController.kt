@@ -13,7 +13,7 @@ import com.mayosen.financeapp.command.api.v1.DeleteAccountRequest
 import com.mayosen.financeapp.command.api.v1.DepositRequest
 import com.mayosen.financeapp.command.api.v1.TransferRequest
 import com.mayosen.financeapp.command.api.v1.WithdrawRequest
-import com.mayosen.financeapp.util.IdGenerator.generateCommandId
+import com.mayosen.financeapp.util.IdGenerator
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -24,12 +24,13 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class CommandController(
     private val commandGateway: CommandGateway,
+    private val idGenerator: IdGenerator,
 ) : CommandApi {
     override fun createAccount(createAccountRequest: CreateAccountRequest): ResponseEntity<CommandResponse> {
         logger.info { "Received CreateAccountRequest: $createAccountRequest" }
         val command =
             CreateAccountCommand(
-                id = generateCommandId(),
+                id = idGenerator.generateCommandId(),
                 ownerId = createAccountRequest.ownerId,
             )
         return sendCommandReturningId(command)
@@ -39,7 +40,7 @@ class CommandController(
         logger.info { "Received DepositRequest: $depositRequest" }
         val command =
             DepositCommand(
-                id = generateCommandId(),
+                id = idGenerator.generateCommandId(),
                 accountId = depositRequest.accountId,
                 amount = depositRequest.amount,
             )
@@ -50,7 +51,7 @@ class CommandController(
         logger.info { "Received WithdrawRequest: $withdrawRequest" }
         val command =
             WithdrawCommand(
-                id = generateCommandId(),
+                id = idGenerator.generateCommandId(),
                 accountId = withdrawRequest.accountId,
                 amount = withdrawRequest.amount,
             )
@@ -61,7 +62,7 @@ class CommandController(
         logger.info { "Received TransferRequest: $transferRequest" }
         val command =
             TransferCommand(
-                id = generateCommandId(),
+                id = idGenerator.generateCommandId(),
                 fromAccountId = transferRequest.fromAccountId,
                 toAccountId = transferRequest.toAccountId,
                 amount = transferRequest.amount,
@@ -73,7 +74,7 @@ class CommandController(
         logger.info { "Received DeleteAccountRequest: $deleteAccountRequest" }
         val command =
             DeleteAccountCommand(
-                id = generateCommandId(),
+                id = idGenerator.generateCommandId(),
                 accountId = deleteAccountRequest.accountId,
             )
         return sendCommandReturningId(command)

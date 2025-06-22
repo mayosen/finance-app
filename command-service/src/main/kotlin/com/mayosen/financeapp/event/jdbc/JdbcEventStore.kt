@@ -2,7 +2,7 @@ package com.mayosen.financeapp.event.jdbc
 
 import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.event.EventStore
-import com.mayosen.financeapp.event.typeName
+import com.mayosen.financeapp.event.serialization.typeName
 import org.springframework.stereotype.Service
 import kotlin.reflect.KClass
 

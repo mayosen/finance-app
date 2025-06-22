@@ -8,7 +8,7 @@ import com.mayosen.financeapp.event.TransferPerformedEvent
 import com.mayosen.financeapp.event.WithdrawalPerformedEvent
 import com.mayosen.financeapp.exception.AccountNotFoundException
 import com.mayosen.financeapp.snapshot.AccountSnapshot
-import com.mayosen.financeapp.util.IdGenerator.generateEventId
+import com.mayosen.financeapp.util.IdGenerator
 import java.math.BigDecimal
 
 /**
@@ -17,11 +17,13 @@ import java.math.BigDecimal
  */
 class AccountAggregate(
     val accountId: String,
+    private val idGenerator: IdGenerator,
 ) {
     var balance: BigDecimal = BigDecimal.ZERO
 
     @Deprecated("Unused?")
     var created: Boolean = false
+
     private val newEvents = mutableListOf<Event>()
 
     fun loadFromSnapshot(snapshot: AccountSnapshot) {
@@ -65,7 +67,7 @@ class AccountAggregate(
         }
         val event =
             AccountCreatedEvent(
-                eventId = generateEventId(),
+                eventId = idGenerator.generateEventId(),
                 accountId = accountId,
                 ownerId = ownerId,
             )
@@ -76,7 +78,7 @@ class AccountAggregate(
         require(amount > BigDecimal.ZERO) { "Deposit amount must be positive" }
         val event =
             DepositPerformedEvent(
-                eventId = generateEventId(),
+                eventId = idGenerator.generateEventId(),
                 accountId = accountId,
                 amount = amount,
             )
@@ -90,7 +92,7 @@ class AccountAggregate(
         }
         val event =
             WithdrawalPerformedEvent(
-                eventId = generateEventId(),
+                eventId = idGenerator.generateEventId(),
                 accountId = accountId,
                 amount = amount,
             )
@@ -107,7 +109,7 @@ class AccountAggregate(
         }
         val event =
             TransferPerformedEvent(
-                eventId = generateEventId(),
+                eventId = idGenerator.generateEventId(),
                 accountId = accountId,
                 toAccountId = toAccountId,
                 amount = amount,
@@ -121,7 +123,7 @@ class AccountAggregate(
         }
         val event =
             AccountDeletedEvent(
-                eventId = generateEventId(),
+                eventId = idGenerator.generateEventId(),
                 accountId = accountId,
             )
         applyEventAndStore(event)

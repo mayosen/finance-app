@@ -1,11 +1,11 @@
 spring:
   datasource:
-    url: REPLACED
-    driver-class-name: REPLACED
-    username: REPLACED
-    password: REPLACED
+    url: ${REPLACED}
+    driver-class-name: ${REPLACED}
+    username: ${REPLACED}
+    password: ${REPLACED}
   kafka:
-    bootstrap-servers: REPLACED
+    bootstrap-servers: ${REPLACED}
 
 logging:
   level:

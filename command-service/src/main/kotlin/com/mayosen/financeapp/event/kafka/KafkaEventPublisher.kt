@@ -1,10 +1,10 @@
 package com.mayosen.financeapp.event.kafka
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.mayosen.financeapp.event.EVENT_TYPE_KEY
 import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.event.EventPublisher
-import com.mayosen.financeapp.event.typeName
+import com.mayosen.financeapp.event.serialization.EVENT_TYPE_KEY
+import com.mayosen.financeapp.event.serialization.typeName
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.header.Header
 import org.apache.kafka.common.header.internals.RecordHeader
@@ -13,8 +13,6 @@ import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
-
-// TODO: Send value of Event type
 
 @Service
 class KafkaEventPublisher(
