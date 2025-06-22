@@ -4,7 +4,7 @@ import com.mayosen.financeapp.event.AccountCreatedEvent
 import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.event.serialization.EVENT_TYPE_KEY
 import com.mayosen.financeapp.event.serialization.typeName
-import com.mayosen.financeapp.readmodel.accountsummary.jdbc.AccountSummaryEntity
+import com.mayosen.financeapp.projection.account.jdbc.AccountSummaryEntity
 import com.mayosen.financeapp.test.ACCOUNT_ID
 import com.mayosen.financeapp.test.BALANCE_0
 import com.mayosen.financeapp.test.EVENT_ID

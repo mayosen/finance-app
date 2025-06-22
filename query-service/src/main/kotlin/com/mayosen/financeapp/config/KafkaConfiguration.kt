@@ -32,7 +32,6 @@ class KafkaConfiguration {
             JsonDeserializer(Event::class.java, objectMapper).apply {
                 setTypeResolver(headerAwareJsonTypeResolver)
                 addTrustedPackages("com.mayosen.financeapp.event")
-                // addTrustedPackages("*")
             }
         return ErrorHandlingDeserializer(jsonDeserializer)
     }
@@ -46,7 +45,6 @@ class KafkaConfiguration {
         eventDeserializer: Deserializer<Event>,
     ): ConsumerFactory<String, Event> {
         val props = kafkaProperties.buildConsumerProperties()
-        props.remove(VALUE_DESERIALIZER_CLASS_CONFIG)
         return DefaultKafkaConsumerFactory(
             props,
             StringDeserializer(),

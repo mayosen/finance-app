@@ -34,11 +34,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
-      id: FAPP-2-create-table_transaction_view
+      id: FAPP-2-create-table_transaction
       author: mayosen
       changes:
         - createTable:
-            tableName: transaction_view
+            tableName: transaction
             columns:
               - column:
                   name: transaction_id
@@ -84,6 +84,6 @@ databaseChangeLog:
                   type: varchar(100)
                   remarks: "Идентификатор связанного счета. Используется для переводов"
         - addUniqueConstraint:
-            tableName: transaction_view
+            tableName: transaction
             columnNames: source_event_id, type
             constraintName: unique-source_event_id-type

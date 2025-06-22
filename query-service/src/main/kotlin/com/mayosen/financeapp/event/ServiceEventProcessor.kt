@@ -1,7 +1,7 @@
 package com.mayosen.financeapp.event
 
-import com.mayosen.financeapp.readmodel.accountsummary.AccountSummaryStore
-import com.mayosen.financeapp.readmodel.transactionhistory.TransactionHistoryStore
+import com.mayosen.financeapp.projection.account.AccountSummaryStore
+import com.mayosen.financeapp.projection.transaction.TransactionStore
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.support.TransactionTemplate
@@ -9,7 +9,7 @@ import org.springframework.transaction.support.TransactionTemplate
 @Service
 class ServiceEventProcessor(
     private val accountSummaryStore: AccountSummaryStore,
-    private val transactionHistoryStore: TransactionHistoryStore,
+    private val transactionStore: TransactionStore,
     private val transactionTemplate: TransactionTemplate,
 ) {
     fun process(event: ServiceEvent) {
@@ -24,7 +24,7 @@ class ServiceEventProcessor(
         logger.info { "Deleting projections for accountId='${event.accountId}'. Event: $event" }
         transactionTemplate.executeWithoutResult {
             accountSummaryStore.deleteByAccountId(event.accountId)
-            transactionHistoryStore.deleteAllByAccountId(event.accountId)
+            transactionStore.deleteAllByAccountId(event.accountId)
         }
     }
 

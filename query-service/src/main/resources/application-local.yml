@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5442/read_model
+    url: jdbc:postgresql://localhost:5442/projection
     username: postgres
     password: postgres
   kafka:

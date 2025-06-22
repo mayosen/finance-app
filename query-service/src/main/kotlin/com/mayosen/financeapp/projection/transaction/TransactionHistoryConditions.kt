@@ -1,4 +1,4 @@
-package com.mayosen.financeapp.readmodel.transactionhistory
+package com.mayosen.financeapp.projection.transaction
 
 import java.time.Instant
 

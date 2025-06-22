@@ -1,15 +1,15 @@
-package com.mayosen.financeapp.readmodel.transactionhistory.jdbc
+package com.mayosen.financeapp.projection.transaction.jdbc
 
 import java.time.Instant
 
-interface TransactionViewEntityCustomRepository {
+interface TransactionEntityCustomRepository {
     fun findByFilters(
         accountId: String,
         from: Instant?,
         to: Instant?,
         offset: Int,
         limit: Int,
-    ): List<TransactionViewEntity>
+    ): List<TransactionEntity>
 
     fun countByFilters(
         accountId: String,

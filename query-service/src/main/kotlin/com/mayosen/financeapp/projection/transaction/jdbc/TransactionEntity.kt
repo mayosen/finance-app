@@ -1,14 +1,15 @@
-package com.mayosen.financeapp.readmodel.transactionhistory.jdbc
+package com.mayosen.financeapp.projection.transaction.jdbc
 
 import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.PersistenceCreator
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Table
 import java.math.BigDecimal
 import java.time.Instant
 
-@Table("transaction_view")
-data class TransactionViewEntity(
+@Table("transaction")
+data class TransactionEntity(
     @Id
     val transactionId: String,
     val accountId: String,
@@ -20,6 +21,7 @@ data class TransactionViewEntity(
     @Transient
     val isNewEntity: Boolean,
 ) : Persistable<String> {
+    @PersistenceCreator
     constructor(
         transactionId: String,
         accountId: String,

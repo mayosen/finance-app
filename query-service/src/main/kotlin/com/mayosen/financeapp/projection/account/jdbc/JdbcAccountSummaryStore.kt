@@ -1,7 +1,7 @@
-package com.mayosen.financeapp.readmodel.accountsummary.jdbc
+package com.mayosen.financeapp.projection.account.jdbc
 
-import com.mayosen.financeapp.readmodel.accountsummary.AccountSummary
-import com.mayosen.financeapp.readmodel.accountsummary.AccountSummaryStore
+import com.mayosen.financeapp.projection.account.AccountSummary
+import com.mayosen.financeapp.projection.account.AccountSummaryStore
 import org.springframework.stereotype.Component
 import kotlin.jvm.optionals.getOrNull
 

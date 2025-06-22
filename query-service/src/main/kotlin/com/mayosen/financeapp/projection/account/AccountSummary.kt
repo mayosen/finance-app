@@ -1,4 +1,4 @@
-package com.mayosen.financeapp.readmodel.accountsummary
+package com.mayosen.financeapp.projection.account
 
 import java.math.BigDecimal
 import java.time.Instant
@@ -12,5 +12,3 @@ data class AccountSummary(
     val ownerId: String,
     val updatedAt: Instant,
 )
-
-// TODO: Везде, где можно, использовать data class

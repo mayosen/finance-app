@@ -1,23 +1,23 @@
 package com.mayosen.financeapp.query
 
+import com.mayosen.financeapp.projection.account.AccountSummaryStore
+import com.mayosen.financeapp.projection.transaction.Pagination
+import com.mayosen.financeapp.projection.transaction.TimePeriod
+import com.mayosen.financeapp.projection.transaction.Transaction
+import com.mayosen.financeapp.projection.transaction.TransactionHistory
+import com.mayosen.financeapp.projection.transaction.TransactionStore
 import com.mayosen.financeapp.query.api.GetAccountSummaryQuery
 import com.mayosen.financeapp.query.api.GetAccountSummaryResponse
 import com.mayosen.financeapp.query.api.GetTransactionHistoryQuery
 import com.mayosen.financeapp.query.api.GetTransactionHistoryResponse
 import com.mayosen.financeapp.query.api.ListAccountsQuery
 import com.mayosen.financeapp.query.api.ListAccountsResponse
-import com.mayosen.financeapp.readmodel.accountsummary.AccountSummaryStore
-import com.mayosen.financeapp.readmodel.transactionhistory.Pagination
-import com.mayosen.financeapp.readmodel.transactionhistory.TimePeriod
-import com.mayosen.financeapp.readmodel.transactionhistory.Transaction
-import com.mayosen.financeapp.readmodel.transactionhistory.TransactionHistory
-import com.mayosen.financeapp.readmodel.transactionhistory.TransactionHistoryStore
 import org.springframework.stereotype.Service
 
 @Service
 class QueryHandler(
     private val accountSummaryStore: AccountSummaryStore,
-    private val transactionHistoryStore: TransactionHistoryStore,
+    private val transactionStore: TransactionStore,
 ) {
     fun handleListAccounts(query: ListAccountsQuery): ListAccountsResponse {
         val accounts =
@@ -57,7 +57,7 @@ class QueryHandler(
                 limit = query.pagination.limit,
             )
         val transactionHistory =
-            transactionHistoryStore.findByAccountId(
+            transactionStore.findByAccountId(
                 accountId = query.accountId,
                 timePeriod = timePeriod,
                 pagination = pagination,

@@ -1,4 +1,4 @@
-package com.mayosen.financeapp.readmodel.accountsummary
+package com.mayosen.financeapp.projection.account
 
 interface AccountSummaryStore {
     fun findAllByOwnerId(ownerId: String): List<AccountSummary>

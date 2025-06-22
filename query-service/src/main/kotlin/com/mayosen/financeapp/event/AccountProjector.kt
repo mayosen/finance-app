@@ -1,10 +1,10 @@
 package com.mayosen.financeapp.event
 
-import com.mayosen.financeapp.readmodel.accountsummary.AccountSummary
-import com.mayosen.financeapp.readmodel.accountsummary.AccountSummaryStore
-import com.mayosen.financeapp.readmodel.transactionhistory.Transaction
-import com.mayosen.financeapp.readmodel.transactionhistory.TransactionHistoryStore
-import com.mayosen.financeapp.readmodel.transactionhistory.TransactionType
+import com.mayosen.financeapp.projection.account.AccountSummary
+import com.mayosen.financeapp.projection.account.AccountSummaryStore
+import com.mayosen.financeapp.projection.transaction.Transaction
+import com.mayosen.financeapp.projection.transaction.TransactionStore
+import com.mayosen.financeapp.projection.transaction.TransactionType
 import com.mayosen.financeapp.util.IdGenerator
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
@@ -19,7 +19,7 @@ import java.math.BigDecimal
 @Service
 class AccountProjector(
     private val accountSummaryStore: AccountSummaryStore,
-    private val transactionHistoryStore: TransactionHistoryStore,
+    private val transactionStore: TransactionStore,
     private val transactionTemplate: TransactionTemplate,
     private val idGenerator: IdGenerator,
 ) {
@@ -59,7 +59,7 @@ class AccountProjector(
             )
         accountSummaryStore.save(updated)
         val transaction = event.toTransaction()
-        transactionHistoryStore.save(transaction)
+        transactionStore.save(transaction)
     }
 
     private fun applyWithdrawalPerformed(event: WithdrawalPerformedEvent) {
@@ -74,7 +74,7 @@ class AccountProjector(
             )
         accountSummaryStore.save(updated)
         val transaction = event.toTransaction()
-        transactionHistoryStore.save(transaction)
+        transactionStore.save(transaction)
     }
 
     private fun applyTransferPerformed(event: TransferPerformedEvent) {
@@ -101,7 +101,7 @@ class AccountProjector(
 
         val sourceTransaction = event.toSourceTransaction()
         val destinationTransaction = event.toDestinationTransaction()
-        transactionHistoryStore.saveAll(listOf(sourceTransaction, destinationTransaction))
+        transactionStore.saveAll(listOf(sourceTransaction, destinationTransaction))
     }
 
     private fun DepositPerformedEvent.toTransaction(): Transaction =
@@ -155,7 +155,7 @@ class AccountProjector(
 
         transactionTemplate.executeWithoutResult {
             accountSummaryStore.deleteByAccountId(event.accountId)
-            transactionHistoryStore.deleteAllByAccountId(event.accountId)
+            transactionStore.deleteAllByAccountId(event.accountId)
         }
     }
 

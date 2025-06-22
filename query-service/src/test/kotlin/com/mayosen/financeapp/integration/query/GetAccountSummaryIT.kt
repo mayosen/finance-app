@@ -1,6 +1,6 @@
 package com.mayosen.financeapp.integration.query
 
-import com.mayosen.financeapp.readmodel.accountsummary.jdbc.AccountSummaryEntity
+import com.mayosen.financeapp.projection.account.jdbc.AccountSummaryEntity
 import com.mayosen.financeapp.test.ACCOUNT_ID
 import com.mayosen.financeapp.test.BALANCE_50
 import com.mayosen.financeapp.test.INSTANT

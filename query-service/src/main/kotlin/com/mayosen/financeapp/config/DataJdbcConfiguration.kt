@@ -1,7 +1,7 @@
 package com.mayosen.financeapp.config
 
-import com.mayosen.financeapp.readmodel.transactionhistory.jdbc.TransactionViewEntity
-import com.mayosen.financeapp.readmodel.transactionhistory.jdbc.TransactionViewEntityRowMapper
+import com.mayosen.financeapp.projection.transaction.jdbc.TransactionEntity
+import com.mayosen.financeapp.projection.transaction.jdbc.TransactionEntityRowMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jdbc.repository.QueryMappingConfiguration
@@ -12,5 +12,5 @@ class DataJdbcConfiguration {
     @Bean
     fun rowMappers(): QueryMappingConfiguration =
         DefaultQueryMappingConfiguration()
-            .registerRowMapper(TransactionViewEntity::class.java, TransactionViewEntityRowMapper)
+            .registerRowMapper(TransactionEntity::class.java, TransactionEntityRowMapper)
 }

@@ -1,4 +1,4 @@
-package com.mayosen.financeapp.readmodel.transactionhistory.jdbc
+package com.mayosen.financeapp.projection.transaction.jdbc
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -6,20 +6,20 @@ import org.springframework.stereotype.Repository
 import java.time.Instant
 
 @Repository
-class TransactionViewEntityRepositoryImpl(
+class TransactionEntityRepositoryImpl(
     private val jdbcTemplate: NamedParameterJdbcTemplate,
-) : TransactionViewEntityCustomRepository {
+) : TransactionEntityCustomRepository {
     override fun findByFilters(
         accountId: String,
         from: Instant?,
         to: Instant?,
         offset: Int,
         limit: Int,
-    ): List<TransactionViewEntity> {
+    ): List<TransactionEntity> {
         val sql =
             buildString {
                 append("SELECT * ")
-                append("FROM transaction_view ")
+                append("FROM transaction ")
                 append("WHERE account_id = :accountId ")
                 if (from != null) append("AND timestamp >= :from ")
                 if (to != null) append("AND timestamp <= :to ")
@@ -35,7 +35,7 @@ class TransactionViewEntityRepositoryImpl(
         from?.let { params.addValue("from", it) }
         to?.let { params.addValue("to", it) }
 
-        return jdbcTemplate.query(sql, params, TransactionViewEntityRowMapper)
+        return jdbcTemplate.query(sql, params, TransactionEntityRowMapper)
     }
 
     override fun countByFilters(
@@ -46,7 +46,7 @@ class TransactionViewEntityRepositoryImpl(
         val sql =
             buildString {
                 append("SELECT COUNT(*) ")
-                append("FROM transaction_view ")
+                append("FROM transaction ")
                 append("WHERE account_id = :accountId ")
                 if (from != null) append("AND timestamp >= :from ")
                 if (to != null) append("AND timestamp <= :to ")

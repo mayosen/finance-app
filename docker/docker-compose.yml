@@ -17,7 +17,7 @@ services:
     image: postgres:17
     restart: unless-stopped
     environment:
-      - POSTGRES_DB=read_model
+      - POSTGRES_DB=projection
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:

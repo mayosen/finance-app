@@ -1,18 +1,18 @@
-package com.mayosen.financeapp.readmodel.transactionhistory.jdbc
+package com.mayosen.financeapp.projection.transaction.jdbc
 
-import com.mayosen.financeapp.readmodel.transactionhistory.Pagination
-import com.mayosen.financeapp.readmodel.transactionhistory.TimePeriod
-import com.mayosen.financeapp.readmodel.transactionhistory.Transaction
-import com.mayosen.financeapp.readmodel.transactionhistory.TransactionHistory
-import com.mayosen.financeapp.readmodel.transactionhistory.TransactionHistoryStore
-import com.mayosen.financeapp.readmodel.transactionhistory.TransactionType
+import com.mayosen.financeapp.projection.transaction.Pagination
+import com.mayosen.financeapp.projection.transaction.TimePeriod
+import com.mayosen.financeapp.projection.transaction.Transaction
+import com.mayosen.financeapp.projection.transaction.TransactionHistory
+import com.mayosen.financeapp.projection.transaction.TransactionStore
+import com.mayosen.financeapp.projection.transaction.TransactionType
 import org.springframework.stereotype.Component
 import org.springframework.util.Assert
 
 @Component
-class JdbcTransactionHistoryStore(
-    private val transactionViewEntityRepository: TransactionViewEntityRepository,
-) : TransactionHistoryStore {
+class JdbcTransactionStore(
+    private val transactionEntityRepository: TransactionEntityRepository,
+) : TransactionStore {
     override fun findByAccountId(
         accountId: String,
         timePeriod: TimePeriod?,
@@ -21,9 +21,9 @@ class JdbcTransactionHistoryStore(
         val from = timePeriod?.from
         val to = timePeriod?.to
 
-        val total = transactionViewEntityRepository.countByFilters(accountId, from, to)
+        val total = transactionEntityRepository.countByFilters(accountId, from, to)
         val entities =
-            transactionViewEntityRepository
+            transactionEntityRepository
                 .findByFilters(
                     accountId = accountId,
                     from = from,
@@ -49,7 +49,7 @@ class JdbcTransactionHistoryStore(
         )
     }
 
-    private fun TransactionViewEntity.toTransaction() =
+    private fun TransactionEntity.toTransaction() =
         Transaction(
             accountId = accountId,
             transactionId = transactionId,
@@ -63,21 +63,21 @@ class JdbcTransactionHistoryStore(
 
     override fun save(transaction: Transaction) {
         val entity = transaction.toViewEntity()
-        transactionViewEntityRepository.save(entity)
+        transactionEntityRepository.save(entity)
     }
 
     override fun saveAll(transactions: List<Transaction>) {
         val entities = transactions.map { it.toViewEntity() }
-        transactionViewEntityRepository.saveAll(entities)
+        transactionEntityRepository.saveAll(entities)
     }
 
-    private fun Transaction.toViewEntity(): TransactionViewEntity =
-        TransactionViewEntity(
+    private fun Transaction.toViewEntity(): TransactionEntity =
+        TransactionEntity(
             transactionId = sourceEventId,
             accountId = accountId,
             sourceEventId = sourceEventId,
             // TODO: Map explicitly
-            type = TransactionViewEntity.TransactionType.valueOf(type.name),
+            type = com.mayosen.financeapp.projection.transaction.jdbc.TransactionEntity.TransactionType.valueOf(type.name),
             amount = amount,
             timestamp = timestamp,
             relatedAccountId = relatedAccountId,
@@ -85,7 +85,7 @@ class JdbcTransactionHistoryStore(
         )
 
     override fun deleteAllByAccountId(accountId: String) {
-        val transactionsDeleted = transactionViewEntityRepository.deleteAllByAccountId(accountId)
+        val transactionsDeleted = transactionEntityRepository.deleteAllByAccountId(accountId)
         // TODO: log number
     }
 }

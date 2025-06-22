@@ -1,4 +1,4 @@
-package com.mayosen.financeapp.readmodel.accountsummary.jdbc
+package com.mayosen.financeapp.projection.account.jdbc
 
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository

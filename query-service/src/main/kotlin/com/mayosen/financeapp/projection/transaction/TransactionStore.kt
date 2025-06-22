@@ -1,6 +1,6 @@
-package com.mayosen.financeapp.readmodel.transactionhistory
+package com.mayosen.financeapp.projection.transaction
 
-interface TransactionHistoryStore {
+interface TransactionStore {
     fun findByAccountId(
         accountId: String,
         timePeriod: TimePeriod?,
