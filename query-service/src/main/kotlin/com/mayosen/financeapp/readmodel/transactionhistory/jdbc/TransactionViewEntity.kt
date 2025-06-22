@@ -7,7 +7,7 @@ import org.springframework.data.relational.core.mapping.Table
 import java.math.BigDecimal
 import java.time.Instant
 
-@Table("TRANSACTION_VIEW")
+@Table("transaction_view")
 data class TransactionViewEntity(
     @Id
     val transactionId: String,

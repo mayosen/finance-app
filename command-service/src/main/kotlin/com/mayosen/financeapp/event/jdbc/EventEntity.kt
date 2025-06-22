@@ -9,8 +9,8 @@ import java.time.Instant
 
 // TODO: Indexes
 
-@Table("EVENT")
-class EventEntity(
+@Table("event")
+data class EventEntity(
     @Id
     val eventId: String,
     val sequenceNumber: Long,

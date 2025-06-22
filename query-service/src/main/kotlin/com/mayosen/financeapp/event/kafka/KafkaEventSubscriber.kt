@@ -1,7 +1,10 @@
 package com.mayosen.financeapp.event.kafka
 
+import com.mayosen.financeapp.config.KafkaConfiguration.Companion.LISTENER_CONTAINER_FACTORY
+import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.event.EventHandler
 import com.mayosen.financeapp.event.EventSubscriber
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.support.Acknowledgment
@@ -9,9 +12,7 @@ import org.springframework.stereotype.Service
 import kotlin.properties.Delegates
 
 @Service
-class KafkaEventSubscriber(
-    private val eventDeserializer: EventDeserializer,
-) : EventSubscriber {
+class KafkaEventSubscriber : EventSubscriber {
     private var eventHandler: EventHandler by Delegates.notNull()
 
     override fun subscribe(handler: EventHandler) {
@@ -19,15 +20,19 @@ class KafkaEventSubscriber(
     }
 
     // TODO: Use properties
-    @KafkaListener(topics = ["\${app.kafka.events.topic}"], groupId = "query-service")
+    @KafkaListener(
+        topics = ["\${app.kafka.events.topic}"],
+        groupId = "query-service",
+        // idIsGroup = false,
+        containerFactory = LISTENER_CONTAINER_FACTORY,
+    )
     fun onMessage(
-        message: String,
+        record: ConsumerRecord<String, Event>,
         acknowledgment: Acknowledgment,
     ) {
         try {
-            logger.info("Got message: $message")
-            val event = eventDeserializer.deserialize(message)
-            eventHandler.handle(event)
+            logger.info("Got message: ${record.value()}")
+            eventHandler.handle(record.value())
             acknowledgment.acknowledge()
             logger.info("Message was processed")
         } catch (ex: Exception) {

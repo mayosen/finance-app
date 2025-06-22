@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
 @Component
-class EventDeserializer(
+class EventEntityDeserializer(
     private val objectMapper: ObjectMapper,
 ) {
     fun deserialize(entity: EventEntity): Event {

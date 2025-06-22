@@ -8,7 +8,7 @@ import org.springframework.data.relational.core.mapping.Table
 import java.math.BigDecimal
 import java.time.Instant
 
-@Table("ACCOUNT_SUMMARY")
+@Table("account_summary")
 data class AccountSummaryEntity(
     @Id
     val accountId: String,

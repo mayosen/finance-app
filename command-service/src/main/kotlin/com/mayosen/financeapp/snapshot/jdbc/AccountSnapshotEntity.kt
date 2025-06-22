@@ -10,8 +10,8 @@ import java.time.Instant
 
 // TODO: Indexes
 
-@Table("SNAPSHOT")
-class AccountSnapshotEntity(
+@Table("snapshot")
+data class AccountSnapshotEntity(
     @Id
     val accountId: String,
     val balance: BigDecimal,

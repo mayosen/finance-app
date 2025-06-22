@@ -3,11 +3,11 @@ package com.mayosen.financeapp.event.jdbc
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.mayosen.financeapp.event.Event
+import com.mayosen.financeapp.event.typeName
 import org.springframework.stereotype.Component
-import kotlin.reflect.KClass
 
 @Component
-class EventSerializer(
+class EventEntitySerializer(
     private val objectMapper: ObjectMapper,
 ) {
     fun serialize(
@@ -24,12 +24,10 @@ class EventSerializer(
             eventId = event.eventId,
             sequenceNumber = sequenceNumber,
             accountId = event.accountId,
-            eventType = getEventType(event::class),
+            eventType = event.typeName(),
             eventFields = eventFields,
             timestamp = event.timestamp,
             isNewEntity = isNew,
         )
     }
-
-    fun getEventType(type: KClass<out Event>): String = type.qualifiedName!!
 }
