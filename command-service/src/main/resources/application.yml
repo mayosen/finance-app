@@ -1,6 +1,8 @@
 spring:
   application:
     name: command-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
   liquibase:
     enabled: true
     change-log: classpath:liquibase/changelog-master.yml

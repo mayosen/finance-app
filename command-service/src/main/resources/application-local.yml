@@ -1,12 +1,8 @@
 spring:
   datasource:
-    url: jdbc:h2:file:./.local/databases/command-db
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: password
-  h2:
-    console:
-      enabled: true
+    url: jdbc:postgresql://localhost:5452/event
+    username: postgres
+    password: postgres
   kafka:
     bootstrap-servers: http://localhost:9092
 

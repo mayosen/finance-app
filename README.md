@@ -7,3 +7,5 @@ To generate API by OpenAPI specification turn on the appropriate Maven profile:
 - generate-query-service-api
 
 Finally, do not forget to apply "Reformat Code" and "Optimize Imports" actions.
+
+## Run locally

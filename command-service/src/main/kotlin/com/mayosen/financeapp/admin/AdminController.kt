@@ -1,6 +1,6 @@
 package com.mayosen.financeapp.admin
 
-import com.mayosen.financeapp.command.Command
+import com.mayosen.financeapp.command.api.AdminCommand
 import com.mayosen.financeapp.command.api.CommandGateway
 import com.mayosen.financeapp.command.api.ReplayEventsCommand
 import com.mayosen.financeapp.command.api.admin.AdminApi
@@ -23,11 +23,10 @@ class AdminController(
                 id = idGenerator.generateCommandId(),
                 accountId = replayEventsRequest.accountId,
             )
-        commandGateway.send(command)
         return sendCommandReturningId(command)
     }
 
-    private fun sendCommandReturningId(command: Command): ResponseEntity<AdminCommandResponse> {
+    private fun sendCommandReturningId(command: AdminCommand): ResponseEntity<AdminCommandResponse> {
         commandGateway.send(command)
         val response = AdminCommandResponse(id = command.id)
         return ResponseEntity.ok(response)
