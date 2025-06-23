@@ -12,10 +12,14 @@ object TransactionEntityRowMapper : RowMapper<TransactionEntity> {
             transactionId = rs.getString("transaction_id"),
             accountId = rs.getString("account_id"),
             sourceEventId = rs.getString("source_event_id"),
-            // TODO: Map explicitly
-            type = TransactionEntity.TransactionType.valueOf(rs.getString("type")),
+            type = rs.getTransactionType(),
             amount = rs.getBigDecimal("amount"),
             timestamp = rs.getTimestamp("timestamp").toInstant(),
             relatedAccountId = rs.getString("related_account_id"),
         )
+
+    private fun ResultSet.getTransactionType(): TransactionEntity.TransactionType {
+        val value = getString("type")
+        return TransactionEntity.TransactionType.valueOf(value)
+    }
 }

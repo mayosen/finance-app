@@ -5,7 +5,8 @@ import com.mayosen.financeapp.projection.transaction.TimePeriod
 import com.mayosen.financeapp.projection.transaction.Transaction
 import com.mayosen.financeapp.projection.transaction.TransactionHistory
 import com.mayosen.financeapp.projection.transaction.TransactionStore
-import com.mayosen.financeapp.projection.transaction.TransactionType
+import com.mayosen.financeapp.projection.transaction.jdbc.mapper.DtoToEntityMapper.toEntity
+import com.mayosen.financeapp.projection.transaction.jdbc.mapper.EntityToDtoMapper.toTransaction
 import org.springframework.stereotype.Component
 import org.springframework.util.Assert
 
@@ -38,51 +39,24 @@ class JdbcTransactionStore(
 
         val transactions = entities.map { it.toTransaction() }
         val hasMore = pagination.offset + transactions.size < total
+        val paginationDto =
+            TransactionHistory.Pagination(
+                hasMore = hasMore,
+                total = total,
+            )
 
-        return TransactionHistory(
-            transactions = transactions,
-            pagination =
-                TransactionHistory.Pagination(
-                    hasMore = hasMore,
-                    total = total,
-                ),
-        )
+        return TransactionHistory(transactions = transactions, pagination = paginationDto)
     }
 
-    private fun TransactionEntity.toTransaction() =
-        Transaction(
-            accountId = accountId,
-            transactionId = transactionId,
-            sourceEventId = transactionId,
-            // TODO: Map explicitly
-            type = TransactionType.valueOf(type.name),
-            amount = amount,
-            timestamp = timestamp,
-            relatedAccountId = relatedAccountId,
-        )
-
     override fun save(transaction: Transaction) {
-        val entity = transaction.toViewEntity()
+        val entity = transaction.toEntity()
         transactionEntityRepository.save(entity)
     }
 
     override fun saveAll(transactions: List<Transaction>) {
-        val entities = transactions.map { it.toViewEntity() }
+        val entities = transactions.map { it.toEntity() }
         transactionEntityRepository.saveAll(entities)
     }
-
-    private fun Transaction.toViewEntity(): TransactionEntity =
-        TransactionEntity(
-            transactionId = sourceEventId,
-            accountId = accountId,
-            sourceEventId = sourceEventId,
-            // TODO: Map explicitly
-            type = com.mayosen.financeapp.projection.transaction.jdbc.TransactionEntity.TransactionType.valueOf(type.name),
-            amount = amount,
-            timestamp = timestamp,
-            relatedAccountId = relatedAccountId,
-            isNewEntity = true,
-        )
 
     override fun deleteAllByAccountId(accountId: String) {
         val transactionsDeleted = transactionEntityRepository.deleteAllByAccountId(accountId)

@@ -97,21 +97,23 @@ class QueryController(
     private fun GetTransactionHistoryResponse.Transaction.toTransaction(): Transaction =
         Transaction(
             transactionId = transactionId,
-            // TODO: Map explicitly
-            type = TransactionType.valueOf(type.name),
+            type = type.toType(),
             amount = amount,
             timestamp = timestamp,
             relatedAccountId = relatedAccountId,
         )
+
+    private fun GetTransactionHistoryResponse.TransactionType.toType(): TransactionType =
+        when (this) {
+            GetTransactionHistoryResponse.TransactionType.DEPOSIT -> TransactionType.DEPOSIT
+            GetTransactionHistoryResponse.TransactionType.WITHDRAWAL -> TransactionType.WITHDRAWAL
+            GetTransactionHistoryResponse.TransactionType.TRANSFER_IN -> TransactionType.TRANSFER_IN
+            GetTransactionHistoryResponse.TransactionType.TRANSFER_OUT -> TransactionType.TRANSFER_OUT
+        }
 
     private fun GetTransactionHistoryResponse.Pagination.toPagination() =
         com.mayosen.financeapp.query.api.v1.Pagination(
             hasMore = hasMore,
             total = total,
         )
-
-    private companion object {
-        const val DEFAULT_PAGE_OFFSET = 0
-        const val DEFAULT_PAGE_LIMIT = 20
-    }
 }

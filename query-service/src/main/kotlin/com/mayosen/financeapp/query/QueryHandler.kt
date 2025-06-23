@@ -6,6 +6,7 @@ import com.mayosen.financeapp.projection.transaction.TimePeriod
 import com.mayosen.financeapp.projection.transaction.Transaction
 import com.mayosen.financeapp.projection.transaction.TransactionHistory
 import com.mayosen.financeapp.projection.transaction.TransactionStore
+import com.mayosen.financeapp.projection.transaction.TransactionType
 import com.mayosen.financeapp.query.api.GetAccountSummaryQuery
 import com.mayosen.financeapp.query.api.GetAccountSummaryResponse
 import com.mayosen.financeapp.query.api.GetTransactionHistoryQuery
@@ -77,12 +78,19 @@ class QueryHandler(
     private fun Transaction.toTransaction(): GetTransactionHistoryResponse.Transaction =
         GetTransactionHistoryResponse.Transaction(
             transactionId = transactionId,
-            // TODO: Map explicitly
-            type = GetTransactionHistoryResponse.TransactionType.valueOf(type.name),
+            type = type.toType(),
             amount = amount,
             timestamp = timestamp,
             relatedAccountId = relatedAccountId,
         )
+
+    private fun TransactionType.toType(): GetTransactionHistoryResponse.TransactionType =
+        when (this) {
+            TransactionType.DEPOSIT -> GetTransactionHistoryResponse.TransactionType.DEPOSIT
+            TransactionType.WITHDRAWAL -> GetTransactionHistoryResponse.TransactionType.WITHDRAWAL
+            TransactionType.TRANSFER_IN -> GetTransactionHistoryResponse.TransactionType.TRANSFER_IN
+            TransactionType.TRANSFER_OUT -> GetTransactionHistoryResponse.TransactionType.TRANSFER_OUT
+        }
 
     private fun TransactionHistory.Pagination.toPagination() =
         GetTransactionHistoryResponse.Pagination(
