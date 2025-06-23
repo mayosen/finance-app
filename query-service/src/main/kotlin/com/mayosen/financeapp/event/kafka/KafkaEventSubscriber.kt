@@ -19,11 +19,9 @@ class KafkaEventSubscriber : EventSubscriber {
         eventHandler = handler
     }
 
-    // TODO: Use properties
     @KafkaListener(
         topics = ["\${app.kafka.events.topic}"],
         groupId = "query-service",
-        // idIsGroup = false,
         containerFactory = LISTENER_CONTAINER_FACTORY,
     )
     fun onMessage(

@@ -7,6 +7,7 @@ import com.mayosen.financeapp.projection.transaction.TransactionHistory
 import com.mayosen.financeapp.projection.transaction.TransactionStore
 import com.mayosen.financeapp.projection.transaction.jdbc.mapper.DtoToEntityMapper.toEntity
 import com.mayosen.financeapp.projection.transaction.jdbc.mapper.EntityToDtoMapper.toTransaction
+import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Component
 import org.springframework.util.Assert
 
@@ -59,7 +60,9 @@ class JdbcTransactionStore(
     }
 
     override fun deleteAllByAccountId(accountId: String) {
-        val transactionsDeleted = transactionEntityRepository.deleteAllByAccountId(accountId)
-        // TODO: log number
+        val numberOfTransactions = transactionEntityRepository.deleteAllByAccountId(accountId)
+        logger.info("Deleted $numberOfTransactions transactions for account '$accountId'")
     }
+
+    private companion object : Logging
 }

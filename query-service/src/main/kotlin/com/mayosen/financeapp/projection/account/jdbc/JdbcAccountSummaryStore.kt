@@ -2,6 +2,7 @@ package com.mayosen.financeapp.projection.account.jdbc
 
 import com.mayosen.financeapp.projection.account.AccountSummary
 import com.mayosen.financeapp.projection.account.AccountSummaryStore
+import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Component
 import kotlin.jvm.optionals.getOrNull
 
@@ -52,7 +53,10 @@ class JdbcAccountSummaryStore(
     override fun deleteByAccountId(accountId: String) {
         if (accountSummaryEntityRepository.existsById(accountId)) {
             accountSummaryEntityRepository.deleteById(accountId)
+        } else {
+            logger.info("Account '$accountId' does not exist and won't be deleted")
         }
-        // TODO: Else what?
     }
+
+    private companion object : Logging
 }

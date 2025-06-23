@@ -74,7 +74,7 @@ class KafkaTestConsumerConfiguration {
         consumerFactory: ConsumerFactory<K, V>,
         messageListener: MessageListener<K, V>,
     ): MessageListenerContainer {
-        val topic = "financeapp-events"
+        val topic = environment["app.kafka.events.topic"]
         val topicPartitionOffset = TopicPartitionOffset(topic, 0, 0L)
         val containerProperties = ContainerProperties(topicPartitionOffset)
         val messageListenerContainer =

@@ -20,6 +20,7 @@ import org.awaitility.kotlin.await
 import org.awaitility.kotlin.untilAsserted
 import org.awaitility.kotlin.withPollDelay
 import org.junit.jupiter.api.Test
+import org.springframework.core.env.get
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -55,7 +56,8 @@ class ProjectAccountCreatedEventIT : BaseIntegrationTest() {
     fun Event.toProducerRecord(): ProducerRecord<String, String> {
         val payload = objectMapper.writeValueAsString(this)
         val headers = listOf(createHeader(EVENT_TYPE_KEY, typeName()))
-        return ProducerRecord("financeapp-events", null, eventId, payload, headers)
+        val topic = environment["app.kafka.events.topic"]
+        return ProducerRecord(topic, null, eventId, payload, headers)
     }
 
     fun createHeader(
