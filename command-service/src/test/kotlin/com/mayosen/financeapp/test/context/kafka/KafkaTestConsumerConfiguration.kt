@@ -1,6 +1,7 @@
 package com.mayosen.financeapp.test.context.kafka
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.mayosen.financeapp.event.Event
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -64,7 +65,7 @@ class KafkaTestConsumerConfiguration {
         val jsonDeserializer =
             JsonDeserializer(EventDto::class.java, objectMapper).apply {
                 setTypeResolver(typeResolver)
-                addTrustedPackages("com.mayosen.financeapp.event") // TODO: Use package of Event::class?
+                addTrustedPackages(Event::class.java.packageName)
             }
         return ErrorHandlingDeserializer(jsonDeserializer)
     }

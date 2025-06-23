@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.event.kafka.HeaderAwareJsonTypeResolver
 import org.apache.kafka.clients.consumer.Consumer
-import org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -31,7 +30,7 @@ class KafkaConfiguration {
         val jsonDeserializer =
             JsonDeserializer(Event::class.java, objectMapper).apply {
                 setTypeResolver(headerAwareJsonTypeResolver)
-                addTrustedPackages("com.mayosen.financeapp.event")
+                addTrustedPackages(Event::class.java.packageName)
             }
         return ErrorHandlingDeserializer(jsonDeserializer)
     }
