@@ -8,8 +8,6 @@ import org.springframework.data.relational.core.mapping.Table
 import java.math.BigDecimal
 import java.time.Instant
 
-// TODO: Indexes
-
 @Table("snapshot")
 data class AccountSnapshotEntity(
     @Id

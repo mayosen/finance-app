@@ -7,8 +7,6 @@ import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
-// TODO: Indexes
-
 @Table("event")
 data class EventEntity(
     @Id
