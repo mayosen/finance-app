@@ -1,6 +1,6 @@
 package com.mayosen.financeapp.event
 
-import kotlin.reflect.KClass
+import com.mayosen.financeapp.event.serialization.EventType
 
 /**
  * Хранилище событий
@@ -17,7 +17,7 @@ interface EventStore {
 
     fun findAllByAccountIdAndTypeIn(
         accountId: String,
-        types: List<KClass<out Event>>,
+        types: List<EventType>,
     ): List<Event>
 
     fun save(event: Event)

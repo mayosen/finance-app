@@ -2,9 +2,11 @@ package com.mayosen.financeapp.event.jdbc
 
 import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.event.EventStore
+import com.mayosen.financeapp.event.jdbc.serialization.EventEntityDeserializer
+import com.mayosen.financeapp.event.jdbc.serialization.EventEntitySerializer
+import com.mayosen.financeapp.event.serialization.EventType
 import com.mayosen.financeapp.event.serialization.typeName
 import org.springframework.stereotype.Service
-import kotlin.reflect.KClass
 
 @Service
 class JdbcEventStore(
@@ -30,7 +32,7 @@ class JdbcEventStore(
 
     override fun findAllByAccountIdAndTypeIn(
         accountId: String,
-        types: List<KClass<out Event>>,
+        types: List<EventType>,
     ): List<Event> {
         val eventTypes = types.map { it.typeName() }
         val entities = eventEntityRepository.findAllByAccountIdAndEventTypeIn(accountId, eventTypes)

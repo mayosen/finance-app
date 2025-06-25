@@ -14,7 +14,7 @@ data class EventEntity(
     val sequenceNumber: Long,
     val accountId: String,
     val eventType: String,
-    val eventFields: String,
+    val eventFields: EventFields,
     val timestamp: Instant,
     @Transient
     val isNewEntity: Boolean,
@@ -26,7 +26,7 @@ data class EventEntity(
         sequenceNumber: Long,
         accountId: String,
         eventType: String,
-        eventFields: String,
+        eventFields: EventFields,
         timestamp: Instant,
     ) : this(
         eventId = eventId,
