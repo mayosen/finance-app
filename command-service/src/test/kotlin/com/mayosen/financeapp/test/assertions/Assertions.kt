@@ -6,7 +6,11 @@ import com.mayosen.financeapp.event.serialization.EventType
 import com.mayosen.financeapp.event.serialization.typeName
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.header.Headers
+import org.assertj.core.api.AbstractInstantAssert
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.byLessThan
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import kotlin.reflect.KClass
 
 fun Headers.assertHasType(type: EventType) = assertHas(EVENT_TYPE_KEY, type.typeName())
@@ -27,3 +31,9 @@ fun <KEY, VALUE, TYPE : Event> ConsumerRecord<KEY, VALUE>.assertHasValueOfType(t
     assertThat(value()).isExactlyInstanceOf(type.java)
     return value() as TYPE
 }
+
+fun AbstractInstantAssert<*>.isCloseToNow(seconds: Int = 1): AbstractInstantAssert<*> =
+    isCloseTo(
+        Instant.now(),
+        byLessThan(seconds.toLong(), ChronoUnit.SECONDS),
+    )

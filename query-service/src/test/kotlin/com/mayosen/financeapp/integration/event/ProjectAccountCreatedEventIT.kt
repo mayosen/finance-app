@@ -48,6 +48,7 @@ class ProjectAccountCreatedEventIT : BaseIntegrationTest() {
             assertThat(entity.accountId).isEqualTo(ACCOUNT_ID)
             assertThat(entity.ownerId).isEqualTo(OWNER_ID)
             assertThat(entity.balance).isEqualTo(BALANCE_0)
+            // TODO: Use isCloseToNow()
             assertThat(entity.updatedAt).isCloseTo(Instant.now(), byLessThan(1, ChronoUnit.SECONDS))
             assertThat(entity.isNewEntity).isFalse()
         }

@@ -72,5 +72,6 @@ class BaseIntegrationTest {
     companion object {
         const val OWNER_ID_FIELD = "ownerId"
         const val AMOUNT_FIELD = "amount"
+        const val TO_ACCOUNT_ID_FIELD = "toAccountId"
     }
 }

@@ -86,7 +86,9 @@ class CommandHandler(
     fun handleDeleteAccount(command: DeleteAccountCommand) {
         logger.info { "Processing DeleteAccountCommand: $command" }
 
-        val aggregate = AccountAggregate(command.accountId, idGenerator)
+        val aggregate =
+            AccountAggregate(command.accountId, idGenerator)
+                .apply { created = true }
 
         if (aggregate.exists()) {
             aggregate.deleteAccount()

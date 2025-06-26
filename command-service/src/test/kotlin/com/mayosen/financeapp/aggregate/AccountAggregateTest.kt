@@ -12,15 +12,13 @@ import com.mayosen.financeapp.test.AMOUNT_50
 import com.mayosen.financeapp.test.EVENT_ID
 import com.mayosen.financeapp.test.LAST_SEQUENCE_NUMBER
 import com.mayosen.financeapp.test.OWNER_ID
+import com.mayosen.financeapp.test.assertions.isCloseToNow
 import com.mayosen.financeapp.test.identifier.TestIdGenerator
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.byLessThan
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 // TODO: Use @DisplayName
 // TODO: Add generators
@@ -71,7 +69,7 @@ class AccountAggregateTest {
             assertThat(snapshot.balance).isEqualTo(AMOUNT_100)
             assertThat(snapshot.created).isTrue()
             assertThat(snapshot.lastSequenceNumber).isEqualTo(LAST_SEQUENCE_NUMBER)
-            assertThat(snapshot.timestamp).isCloseTo(Instant.now(), byLessThan(1, ChronoUnit.SECONDS))
+            assertThat(snapshot.timestamp).isCloseToNow()
         }
     }
 

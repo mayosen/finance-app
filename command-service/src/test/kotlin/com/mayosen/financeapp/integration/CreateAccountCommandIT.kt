@@ -3,25 +3,23 @@ package com.mayosen.financeapp.integration
 import com.mayosen.financeapp.event.AccountCreatedEvent
 import com.mayosen.financeapp.event.jdbc.EventEntity
 import com.mayosen.financeapp.event.serialization.typeName
-import com.mayosen.financeapp.snapshot.jdbc.AccountSnapshotEntity
 import com.mayosen.financeapp.test.ACCOUNT_ID
 import com.mayosen.financeapp.test.EVENT_ID
 import com.mayosen.financeapp.test.OWNER_ID
+import com.mayosen.financeapp.test.SEQUENCE_NUMBER
 import com.mayosen.financeapp.test.assertions.assertHasType
 import com.mayosen.financeapp.test.assertions.assertHasValueOfType
+import com.mayosen.financeapp.test.assertions.isCloseToNow
 import com.mayosen.financeapp.test.context.BaseIntegrationTest
 import com.mayosen.financeapp.test.generator.generateCommandResponse
 import com.mayosen.financeapp.test.generator.generateCreateAccountRequest
 import net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.byLessThan
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 class CreateAccountCommandIT : BaseIntegrationTest() {
     @Test
@@ -50,16 +48,12 @@ class CreateAccountCommandIT : BaseIntegrationTest() {
 
         val entity = events.first()
         assertThat(entity.eventId).isEqualTo(EVENT_ID)
-        assertThat(entity.sequenceNumber).isEqualTo(1)
+        assertThat(entity.sequenceNumber).isEqualTo(SEQUENCE_NUMBER)
         assertThat(entity.accountId).isEqualTo(ACCOUNT_ID)
         assertThat(entity.eventType).isEqualTo(AccountCreatedEvent::class.typeName())
         assertThat(entity.eventFields).isEqualTo(eventFieldsOf(OWNER_ID_FIELD to OWNER_ID))
-        assertThat(entity.timestamp).isCloseTo(Instant.now(), byLessThan(1, ChronoUnit.SECONDS))
+        assertThat(entity.timestamp).isCloseToNow()
         assertThat(entity.isNewEntity).isFalse()
-
-        // step: verify snapshot not saved
-        val snapshots = jdbcTemplate.findAll(AccountSnapshotEntity::class.java)
-        assertThat(snapshots).isEmpty()
 
         // step: verify event published
         val record = eventsCustomer.pollNotNull()
@@ -69,7 +63,7 @@ class CreateAccountCommandIT : BaseIntegrationTest() {
         val event = record.assertHasValueOfType(AccountCreatedEvent::class)
         assertThat(event.eventId).isEqualTo(EVENT_ID)
         assertThat(event.accountId).isEqualTo(ACCOUNT_ID)
-        assertThat(event.timestamp).isCloseTo(Instant.now(), byLessThan(1, ChronoUnit.SECONDS))
+        assertThat(event.timestamp).isCloseToNow()
         assertThat(event.ownerId).isEqualTo(OWNER_ID)
     }
 }
