@@ -1,5 +1,6 @@
 package com.mayosen.financeapp.test.generator
 
+import com.mayosen.financeapp.command.api.admin.ReplayEventsRequest
 import com.mayosen.financeapp.command.api.v1.CreateAccountRequest
 import com.mayosen.financeapp.command.api.v1.DeleteAccountRequest
 import com.mayosen.financeapp.command.api.v1.DepositRequest
@@ -20,3 +21,5 @@ fun generateWithdrawRequest(): WithdrawRequest = WithdrawRequest(accountId = ACC
 fun generateTransferRequest(): TransferRequest = TransferRequest(fromAccountId = ACCOUNT_ID, toAccountId = ACCOUNT_ID_2, amount = AMOUNT_50)
 
 fun generateDeleteAccountRequest(): DeleteAccountRequest = DeleteAccountRequest(accountId = ACCOUNT_ID)
+
+fun generateReplayEventsRequest(): ReplayEventsRequest = ReplayEventsRequest(accountId = ACCOUNT_ID)

@@ -3,7 +3,7 @@ package com.mayosen.financeapp.admin
 import com.mayosen.financeapp.command.api.ReplayEventsCommand
 import com.mayosen.financeapp.event.EventPublisher
 import com.mayosen.financeapp.event.EventStore
-import com.mayosen.financeapp.event.ResetReadModelEvent
+import com.mayosen.financeapp.event.ResetProjectionsEvent
 import com.mayosen.financeapp.util.IdGenerator
 import org.springframework.stereotype.Service
 
@@ -15,7 +15,7 @@ class AdminCommandHandler(
 ) {
     fun handleReplayEvents(command: ReplayEventsCommand) {
         val resetReadModelEvent =
-            ResetReadModelEvent(
+            ResetProjectionsEvent(
                 eventId = idGenerator.generateEventId(),
                 accountId = command.accountId,
             )

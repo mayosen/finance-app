@@ -14,12 +14,12 @@ class ServiceEventProcessor(
 ) {
     fun process(event: ServiceEvent) {
         when (event) {
-            is ResetReadModelEvent -> processResetReadModel(event)
+            is ResetProjectionsEvent -> processResetProjections(event)
             else -> error("Unhandled event type: ${event::class.simpleName}")
         }
     }
 
-    fun processResetReadModel(event: ResetReadModelEvent) {
+    fun processResetProjections(event: ResetProjectionsEvent) {
         // TODO: Block rows
         logger.info { "Deleting projections for accountId='${event.accountId}'. Event: $event" }
         transactionTemplate.executeWithoutResult {
