@@ -12,6 +12,7 @@ class JsonbToEventFieldsConverter(
 ) : Converter<PGobject, EventFields> {
     override fun convert(source: PGobject): EventFields =
         try {
+            require(source.type == "jsonb")
             objectMapper.readValue(source.value!!, EventFields::class.java)
         } catch (e: Exception) {
             throw IllegalStateException("Failed to deserialize JSONB from PGobject", e)
