@@ -43,6 +43,7 @@ class AccountProjector(
                 balance = BigDecimal.ZERO,
                 ownerId = event.ownerId,
                 updatedAt = event.timestamp,
+                sourceEventId = event.eventId,
             )
         accountSummaryStore.save(summary)
     }

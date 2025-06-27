@@ -11,4 +11,5 @@ data class AccountSummary(
     val balance: BigDecimal,
     val ownerId: String,
     val updatedAt: Instant,
+    val sourceEventId: String,
 )

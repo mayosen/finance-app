@@ -24,6 +24,7 @@ class ProjectDepositPerformedEventIT : BaseIntegrationTest() {
                 ownerId = OWNER_ID,
                 balance = AMOUNT_50,
                 updatedAt = INSTANT,
+                sourceEventId = EVENT_ID,
                 isNewEntity = true,
             )
         jdbcTemplate.save(entity)

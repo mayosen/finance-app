@@ -15,6 +15,7 @@ data class AccountSummaryEntity(
     val ownerId: String,
     val balance: BigDecimal,
     val updatedAt: Instant,
+    val sourceEventId: String,
     @Transient
     val isNewEntity: Boolean,
 ) : Persistable<String> {
@@ -25,11 +26,13 @@ data class AccountSummaryEntity(
         ownerId: String,
         balance: BigDecimal,
         updatedAt: Instant,
+        sourceEventId: String,
     ) : this(
         accountId = accountId,
         ownerId = ownerId,
         balance = balance,
         updatedAt = updatedAt,
+        sourceEventId = sourceEventId,
         isNewEntity = false,
     )
 

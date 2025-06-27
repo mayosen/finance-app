@@ -39,6 +39,7 @@ class JdbcAccountSummaryStore(
             balance = balance,
             ownerId = ownerId,
             updatedAt = updatedAt,
+            sourceEventId = sourceEventId,
         )
 
     private fun AccountSummary.toAccountSummaryEntity(isNewEntity: Boolean) =
@@ -47,6 +48,7 @@ class JdbcAccountSummaryStore(
             balance = balance,
             ownerId = ownerId,
             updatedAt = updatedAt,
+            sourceEventId = sourceEventId,
             isNewEntity = isNewEntity,
         )
 
