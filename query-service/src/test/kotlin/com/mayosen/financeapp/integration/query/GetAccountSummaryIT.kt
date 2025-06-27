@@ -2,7 +2,7 @@ package com.mayosen.financeapp.integration.query
 
 import com.mayosen.financeapp.projection.account.jdbc.AccountSummaryEntity
 import com.mayosen.financeapp.test.ACCOUNT_ID
-import com.mayosen.financeapp.test.BALANCE_50
+import com.mayosen.financeapp.test.AMOUNT_50
 import com.mayosen.financeapp.test.INSTANT
 import com.mayosen.financeapp.test.OWNER_ID
 import com.mayosen.financeapp.test.context.BaseIntegrationTest
@@ -17,12 +17,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 class GetAccountSummaryIT : BaseIntegrationTest() {
     @Test
     fun `happy path - should return account summary`() {
-        // given: save account summary
+        // given: account summary saved
         val entity =
             AccountSummaryEntity(
                 accountId = ACCOUNT_ID,
                 ownerId = OWNER_ID,
-                balance = BALANCE_50,
+                balance = AMOUNT_50,
                 updatedAt = INSTANT,
                 isNewEntity = true,
             )

@@ -34,7 +34,7 @@ class KafkaEventSubscriber : EventSubscriber {
             acknowledgment.acknowledge()
             logger.info("Message was processed")
         } catch (ex: Exception) {
-            logger.error("Failed to deserialize and process event: ${ex.message}", ex)
+            logger.error("Failed to deserialize or process event: ${ex.message}", ex)
         }
     }
 

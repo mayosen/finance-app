@@ -7,6 +7,7 @@ import com.mayosen.financeapp.snapshot.jdbc.AccountSnapshotEntity
 import com.mayosen.financeapp.test.ACCOUNT_ID
 import com.mayosen.financeapp.test.AMOUNT_0
 import com.mayosen.financeapp.test.AMOUNT_50
+import com.mayosen.financeapp.test.EVENT_ID_3
 import com.mayosen.financeapp.test.OWNER_ID
 import com.mayosen.financeapp.test.SEQUENCE_NUMBER_2
 import com.mayosen.financeapp.test.SEQUENCE_NUMBER_3
@@ -22,7 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class SnapshotIT : BaseIntegrationTest() {
+class CreateSnapshotIT : BaseIntegrationTest() {
     @Test
     fun `happy path - should create snapshot`() {
         // given: account created
@@ -64,5 +65,8 @@ class SnapshotIT : BaseIntegrationTest() {
         assertThat(snapshot.balance).isEqualTo(AMOUNT_0)
         assertThat(snapshot.lastSequenceNumber).isEqualTo(SEQUENCE_NUMBER_3)
         assertThat(snapshot.timestamp).isCloseToNow()
+
+        val record = eventsCustomer.pollNotNull()
+        assertThat(record.key()).isEqualTo(EVENT_ID_3)
     }
 }

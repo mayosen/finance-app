@@ -32,4 +32,4 @@ val AMOUNT_50 = 50.toBigDecimal().toCurrency()
 val AMOUNT_0 = BigDecimal.ZERO.toCurrency()
 
 // Time
-val INSTANT = Instant.parse("2025-06-01T00:00:00.000Z")
+val INSTANT: Instant = Instant.parse("2025-06-01T00:00:00.000Z")
