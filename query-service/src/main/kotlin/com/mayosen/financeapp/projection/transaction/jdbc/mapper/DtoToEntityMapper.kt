@@ -7,7 +7,7 @@ import com.mayosen.financeapp.projection.transaction.jdbc.TransactionEntity
 object DtoToEntityMapper {
     fun Transaction.toEntity(): TransactionEntity =
         TransactionEntity(
-            transactionId = sourceEventId,
+            transactionId = transactionId,
             accountId = accountId,
             sourceEventId = sourceEventId,
             type = type.toTransactionEntityType(),

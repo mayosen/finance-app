@@ -2,13 +2,15 @@ package com.mayosen.financeapp.integration.event
 
 import com.mayosen.financeapp.event.DepositPerformedEvent
 import com.mayosen.financeapp.projection.account.jdbc.AccountSummaryEntity
+import com.mayosen.financeapp.projection.transaction.jdbc.TransactionEntity
+import com.mayosen.financeapp.projection.transaction.jdbc.TransactionEntity.TransactionType
 import com.mayosen.financeapp.test.ACCOUNT_ID
-import com.mayosen.financeapp.test.AMOUNT_0
 import com.mayosen.financeapp.test.AMOUNT_100
 import com.mayosen.financeapp.test.AMOUNT_50
-import com.mayosen.financeapp.test.EVENT_ID
+import com.mayosen.financeapp.test.EVENT_ID_2
 import com.mayosen.financeapp.test.INSTANT
 import com.mayosen.financeapp.test.OWNER_ID
+import com.mayosen.financeapp.test.TRANSACTION_ID
 import com.mayosen.financeapp.test.assertions.isCloseToNow
 import com.mayosen.financeapp.test.context.BaseIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -24,7 +26,7 @@ class ProjectDepositPerformedEventIT : BaseIntegrationTest() {
                 ownerId = OWNER_ID,
                 balance = AMOUNT_50,
                 updatedAt = INSTANT,
-                sourceEventId = EVENT_ID,
+                sourceEventId = idGenerator.generateEventId(),
                 isNewEntity = true,
             )
         jdbcTemplate.save(entity)
@@ -32,7 +34,7 @@ class ProjectDepositPerformedEventIT : BaseIntegrationTest() {
         // given
         val event =
             DepositPerformedEvent(
-                eventId = EVENT_ID,
+                eventId = idGenerator.generateEventId(),
                 accountId = ACCOUNT_ID,
                 amount = AMOUNT_50,
             )
@@ -40,8 +42,8 @@ class ProjectDepositPerformedEventIT : BaseIntegrationTest() {
         // step: publish
         eventKafkaTemplate.send(event.toProducerRecord())
 
-        // step: verify AccountSummary saved
-        baseAwait {
+        // step: verify account summary updated
+        baseAwait(2) {
             val summaries = jdbcTemplate.findAll(AccountSummaryEntity::class.java)
             assertThat(summaries).hasSize(1)
 
@@ -50,7 +52,22 @@ class ProjectDepositPerformedEventIT : BaseIntegrationTest() {
             assertThat(summary.ownerId).isEqualTo(OWNER_ID)
             assertThat(summary.balance).isEqualTo(AMOUNT_100)
             assertThat(summary.updatedAt).isCloseToNow()
+            assertThat(summary.sourceEventId).isEqualTo(EVENT_ID_2)
             assertThat(summary.isNewEntity).isFalse()
         }
+
+        // step: verify transaction created
+        val transactions = jdbcTemplate.findAll(TransactionEntity::class.java)
+        assertThat(transactions).hasSize(1)
+
+        val transaction = transactions.first()
+        assertThat(transaction.transactionId).isEqualTo(TRANSACTION_ID)
+        assertThat(transaction.accountId).isEqualTo(ACCOUNT_ID)
+        assertThat(transaction.sourceEventId).isEqualTo(EVENT_ID_2)
+        assertThat(transaction.type).isEqualTo(TransactionType.DEPOSIT)
+        assertThat(transaction.amount).isEqualTo(AMOUNT_50)
+        assertThat(transaction.timestamp).isCloseToNow()
+        assertThat(transaction.relatedAccountId).isNull()
+        assertThat(transaction.isNewEntity).isFalse()
     }
 }

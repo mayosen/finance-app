@@ -3,7 +3,7 @@ package com.mayosen.financeapp.test.identifier
 import com.mayosen.financeapp.util.IdGenerator
 
 object TestIdGenerator : IdGenerator {
-    private val transactionGenerator = StringIdGenerator("command_id")
+    private val transactionGenerator = StringIdGenerator("transaction_id")
     private val eventGenerator = StringIdGenerator("event_id")
     private val accountGenerator = StringIdGenerator("account_id")
 

@@ -9,7 +9,7 @@ object EntityToDtoMapper {
         Transaction(
             accountId = accountId,
             transactionId = transactionId,
-            sourceEventId = transactionId,
+            sourceEventId = sourceEventId,
             type = type.toType(),
             amount = amount,
             timestamp = timestamp,

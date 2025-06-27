@@ -3,7 +3,6 @@ package com.mayosen.financeapp.integration.query
 import com.mayosen.financeapp.projection.account.jdbc.AccountSummaryEntity
 import com.mayosen.financeapp.test.ACCOUNT_ID
 import com.mayosen.financeapp.test.AMOUNT_50
-import com.mayosen.financeapp.test.EVENT_ID
 import com.mayosen.financeapp.test.INSTANT
 import com.mayosen.financeapp.test.OWNER_ID
 import com.mayosen.financeapp.test.context.BaseIntegrationTest
@@ -25,7 +24,7 @@ class GetAccountSummaryIT : BaseIntegrationTest() {
                 ownerId = OWNER_ID,
                 balance = AMOUNT_50,
                 updatedAt = INSTANT,
-                sourceEventId = EVENT_ID,
+                sourceEventId = idGenerator.generateEventId(),
                 isNewEntity = true,
             )
         jdbcTemplate.save(entity)

@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.core.env.get
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.test.context.ActiveProfiles
@@ -74,7 +73,15 @@ class BaseIntegrationTest {
         value: String,
     ): Header = RecordHeader(key, value.toByteArray())
 
-    protected fun baseAwait(action: () -> Unit) = await atMost SECONDS_1 withPollDelay MILLIS_200 untilAsserted action
+    protected fun baseAwait(
+        timeout: Int,
+        action: () -> Unit,
+    ) = baseAwait(Duration.ofSeconds(timeout.toLong()), action)
+
+    protected fun baseAwait(
+        timeout: Duration = SECONDS_1,
+        action: () -> Unit,
+    ) = await atMost timeout withPollDelay MILLIS_200 untilAsserted action
 
     protected companion object {
         val SECONDS_1: Duration = Duration.ofSeconds(1)

@@ -57,6 +57,7 @@ class AccountProjector(
             summary.copy(
                 balance = summary.balance + event.amount,
                 updatedAt = event.timestamp,
+                sourceEventId = event.eventId,
             )
         accountSummaryStore.save(updated)
         val transaction = event.toTransaction()
@@ -72,6 +73,7 @@ class AccountProjector(
             summary.copy(
                 balance = summary.balance - event.amount,
                 updatedAt = event.timestamp,
+                sourceEventId = event.eventId,
             )
         accountSummaryStore.save(updated)
         val transaction = event.toTransaction()
@@ -91,11 +93,13 @@ class AccountProjector(
             source.copy(
                 balance = source.balance - event.amount,
                 updatedAt = event.timestamp,
+                sourceEventId = event.eventId,
             )
         val updatedDestination =
             destination.copy(
                 balance = destination.balance + event.amount,
                 updatedAt = event.timestamp,
+                sourceEventId = event.eventId,
             )
 
         accountSummaryStore.saveAll(listOf(updatedSource, updatedDestination))

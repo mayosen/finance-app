@@ -5,7 +5,7 @@ import java.math.BigDecimal
 import java.time.Instant
 
 // Transaction
-const val TRANSACTION_ID = "transaction_id"
+const val TRANSACTION_ID = "transaction_id_1"
 
 // Account
 const val ACCOUNT_ID = "account_id_1"
