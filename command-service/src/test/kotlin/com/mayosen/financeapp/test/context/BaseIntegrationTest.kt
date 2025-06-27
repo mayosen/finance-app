@@ -50,6 +50,7 @@ class BaseIntegrationTest {
         jdbcTemplate.deleteAll(EventEntity::class.java)
         jdbcTemplate.deleteAll(AccountSnapshotEntity::class.java)
         idGenerator.reset()
+        // TODO: Clean Kafka queue
     }
 
     protected fun stringBodyOf(body: Any): String = objectMapper.writeValueAsString(body)

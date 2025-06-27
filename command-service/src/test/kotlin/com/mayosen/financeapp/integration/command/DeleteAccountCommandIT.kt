@@ -1,4 +1,4 @@
-package com.mayosen.financeapp.integration
+package com.mayosen.financeapp.integration.command
 
 import com.mayosen.financeapp.event.AccountCreatedEvent
 import com.mayosen.financeapp.event.AccountDeletedEvent
