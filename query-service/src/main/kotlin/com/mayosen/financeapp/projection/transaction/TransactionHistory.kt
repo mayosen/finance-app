@@ -6,17 +6,17 @@ import java.time.Instant
 /**
  * 	Проекция для истории операций.
  */
-class TransactionHistory(
+data class TransactionHistory(
     val transactions: List<Transaction>,
     val pagination: Pagination,
 ) {
-    class Pagination(
+    data class Pagination(
         val hasMore: Boolean,
         val total: Int,
     )
 }
 
-class Transaction(
+data class Transaction(
     val accountId: String,
     val transactionId: String,
     val sourceEventId: String,
