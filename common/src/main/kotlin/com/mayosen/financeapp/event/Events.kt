@@ -3,8 +3,6 @@ package com.mayosen.financeapp.event
 import java.math.BigDecimal
 import java.time.Instant
 
-// TODO: generate event id by default
-
 data class AccountCreatedEvent(
     override val eventId: String,
     override val accountId: String,
