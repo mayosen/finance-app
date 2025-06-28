@@ -9,6 +9,7 @@ const val TRANSACTION_ID = "transaction_id_1"
 
 // Account
 const val ACCOUNT_ID = "account_id_1"
+const val ACCOUNT_ID_2 = "account_id_2"
 const val OWNER_ID = "owner_id"
 
 // Event
