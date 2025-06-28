@@ -30,7 +30,6 @@ class PostgresqlTestContainerInitializer : ApplicationContextInitializer<Configu
                     "spring.datasource.url" to container!!.jdbcUrl,
                     "spring.datasource.username" to container!!.username,
                     "spring.datasource.password" to container!!.password,
-                    "spring.datasource.driverClassName" to container!!.driverClassName,
                 ),
             ).applyTo(context)
     }

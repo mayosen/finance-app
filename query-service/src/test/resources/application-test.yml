@@ -1,7 +1,6 @@
 spring:
   datasource:
     url: ${REPLACED}
-    driver-class-name: ${REPLACED}
     username: ${REPLACED}
     password: ${REPLACED}
   kafka:
