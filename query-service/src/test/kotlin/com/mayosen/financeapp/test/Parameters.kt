@@ -6,6 +6,7 @@ import java.time.Instant
 
 // Transaction
 const val TRANSACTION_ID = "transaction_id_1"
+const val TRANSACTION_ID_2 = "transaction_id_2"
 
 // Account
 const val ACCOUNT_ID = "account_id_1"

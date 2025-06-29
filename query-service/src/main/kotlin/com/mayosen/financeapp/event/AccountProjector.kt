@@ -140,19 +140,19 @@ class AccountProjector(
             type = TransactionType.TRANSFER_OUT,
             amount = amount,
             timestamp = timestamp,
-            relatedAccountId = accountId!!,
+            relatedAccountId = toAccountId!!,
         )
 
     @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
     private fun TransferPerformedEvent.toDestinationTransaction(): Transaction =
         Transaction(
-            accountId = accountId,
+            accountId = toAccountId,
             sourceEventId = eventId,
             transactionId = idGenerator.generateTransactionId(),
             type = TransactionType.TRANSFER_IN,
             amount = amount,
             timestamp = timestamp,
-            relatedAccountId = toAccountId!!,
+            relatedAccountId = accountId!!,
         )
 
     private fun applyAccountDeleted(event: AccountDeletedEvent) {

@@ -60,8 +60,7 @@ class JdbcTransactionStore(
     }
 
     override fun deleteAllByAccountId(accountId: String) {
-        val numberOfTransactions = transactionEntityRepository.deleteAllByAccountId(accountId)
-        logger.info("Deleted $numberOfTransactions transactions for account '$accountId'")
+        transactionEntityRepository.deleteAllByAccountId(accountId)
     }
 
     private companion object : Logging
