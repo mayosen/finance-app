@@ -1,7 +1,9 @@
 package com.mayosen.financeapp.test.generator
 
+import com.mayosen.financeapp.query.api.v1.Account
 import com.mayosen.financeapp.query.api.v1.GetAccountSummaryResponse
 import com.mayosen.financeapp.query.api.v1.GetTransactionHistoryResponse
+import com.mayosen.financeapp.query.api.v1.ListAccountsResponse
 import com.mayosen.financeapp.query.api.v1.Pagination
 import com.mayosen.financeapp.query.api.v1.Transaction
 import com.mayosen.financeapp.query.api.v1.TransactionType
@@ -45,4 +47,18 @@ fun generatePagination(): Pagination =
     Pagination(
         hasMore = false,
         total = 1,
+    )
+
+fun generateListAccountsResponse(accounts: List<Account> = listOf(generateAccount())): ListAccountsResponse =
+    ListAccountsResponse(accounts = accounts)
+
+fun generateAccount(
+    accountId: String = ACCOUNT_ID,
+    balance: BigDecimal = AMOUNT_50,
+    updatedAt: Instant = INSTANT,
+): Account =
+    Account(
+        accountId = accountId,
+        balance = balance,
+        updatedAt = updatedAt,
     )

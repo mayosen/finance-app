@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.temporal.ChronoUnit
 
-class GetTransactionHistoryIT : BaseIntegrationTest() {
+class GetTransactionHistoryQueryIT : BaseIntegrationTest() {
     @Test
     fun `happy path - should return transaction history`() {
         // given: transactions saved

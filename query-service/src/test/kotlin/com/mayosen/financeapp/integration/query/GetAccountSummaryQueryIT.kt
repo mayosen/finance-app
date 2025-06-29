@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class GetAccountSummaryIT : BaseIntegrationTest() {
+class GetAccountSummaryQueryIT : BaseIntegrationTest() {
     @Test
     fun `happy path - should return account summary`() {
         // given: account summary saved
