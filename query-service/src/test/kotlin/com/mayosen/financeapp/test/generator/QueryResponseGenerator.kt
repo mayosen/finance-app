@@ -1,10 +1,17 @@
 package com.mayosen.financeapp.test.generator
 
 import com.mayosen.financeapp.query.api.v1.GetAccountSummaryResponse
+import com.mayosen.financeapp.query.api.v1.GetTransactionHistoryResponse
+import com.mayosen.financeapp.query.api.v1.Pagination
+import com.mayosen.financeapp.query.api.v1.Transaction
+import com.mayosen.financeapp.query.api.v1.TransactionType
 import com.mayosen.financeapp.test.ACCOUNT_ID
 import com.mayosen.financeapp.test.AMOUNT_50
 import com.mayosen.financeapp.test.INSTANT
 import com.mayosen.financeapp.test.OWNER_ID
+import com.mayosen.financeapp.test.TRANSACTION_ID
+import java.math.BigDecimal
+import java.time.Instant
 
 fun generateGetAccountSummaryResponse(): GetAccountSummaryResponse =
     GetAccountSummaryResponse(
@@ -12,4 +19,30 @@ fun generateGetAccountSummaryResponse(): GetAccountSummaryResponse =
         balance = AMOUNT_50,
         ownerId = OWNER_ID,
         updatedAt = INSTANT,
+    )
+
+fun generateGetTransactionHistoryResponse(transactions: List<Transaction> = listOf(generateTransaction())): GetTransactionHistoryResponse =
+    GetTransactionHistoryResponse(
+        transactions = transactions,
+        pagination = generatePagination(),
+    )
+
+fun generateTransaction(
+    transactionId: String = TRANSACTION_ID,
+    transactionType: TransactionType = TransactionType.DEPOSIT,
+    amount: BigDecimal = AMOUNT_50,
+    timestamp: Instant = INSTANT,
+): Transaction =
+    Transaction(
+        transactionId = transactionId,
+        type = transactionType,
+        amount = amount,
+        timestamp = timestamp,
+        relatedAccountId = null,
+    )
+
+fun generatePagination(): Pagination =
+    Pagination(
+        hasMore = false,
+        total = 1,
     )

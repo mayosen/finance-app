@@ -26,3 +26,4 @@ val AMOUNT_0 = BigDecimal.ZERO.toCurrency()
 
 // Time
 val INSTANT: Instant = Instant.parse("2025-06-01T00:00:00.000Z")
+val INSTANT_2: Instant = Instant.parse("2025-08-01T00:00:00.000Z")

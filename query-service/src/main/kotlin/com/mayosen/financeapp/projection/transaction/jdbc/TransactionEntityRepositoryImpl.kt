@@ -1,5 +1,6 @@
 package com.mayosen.financeapp.projection.transaction.jdbc
 
+import com.mayosen.financeapp.util.serialization.InstantToTimestampConverter
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
@@ -32,8 +33,8 @@ class TransactionEntityRepositoryImpl(
                 .addValue("limit", limit)
                 .addValue("offset", offset)
 
-        from?.let { params.addValue("from", it) }
-        to?.let { params.addValue("to", it) }
+        from?.let { params.addValue("from", InstantToTimestampConverter.convert(it)) }
+        to?.let { params.addValue("to", InstantToTimestampConverter.convert(it)) }
 
         return jdbcTemplate.query(sql, params, TransactionEntityRowMapper)
     }
@@ -56,8 +57,8 @@ class TransactionEntityRepositoryImpl(
             MapSqlParameterSource()
                 .addValue("accountId", accountId)
 
-        from?.let { params.addValue("from", it) }
-        to?.let { params.addValue("to", it) }
+        from?.let { params.addValue("from", InstantToTimestampConverter.convert(it)) }
+        to?.let { params.addValue("to", InstantToTimestampConverter.convert(it)) }
 
         return jdbcTemplate.queryForObject(sql, params, Int::class.java)!!
     }

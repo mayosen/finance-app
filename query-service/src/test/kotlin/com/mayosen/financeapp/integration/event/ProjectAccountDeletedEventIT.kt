@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test
 
 class ProjectAccountDeletedEventIT : BaseIntegrationTest() {
     @Test
-    fun `happy path - should project TransferPerformedEvent`() {
+    fun `happy path - should project AccountDeletedEvent`() {
         // given: account summary saved
         val summaryEntity =
             AccountSummaryEntity(

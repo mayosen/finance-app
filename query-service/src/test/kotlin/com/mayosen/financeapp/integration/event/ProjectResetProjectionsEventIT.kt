@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test
 
 class ProjectResetProjectionsEventIT : BaseIntegrationTest() {
     @Test
-    fun `happy path - should project TransferPerformedEvent`() {
+    fun `happy path - should project ResetProjectionsEvent`() {
         // given: outdated account summary saved
         val summaryEntity =
             AccountSummaryEntity(
