@@ -1,11 +1,11 @@
-package com.mayosen.financeapp.util
+package com.mayosen.financeapp.util.identifier
 
 import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
 class UuidIdGenerator : IdGenerator {
-    override fun generateCommandId(): String = generateUuid()
+    override fun generateTransactionId(): String = generateUuid()
 
     override fun generateEventId(): String = generateUuid()
 

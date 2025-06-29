@@ -1,6 +1,6 @@
 package com.mayosen.financeapp.test.identifier
 
-import com.mayosen.financeapp.util.IdGenerator
+import com.mayosen.financeapp.util.identifier.IdGenerator
 
 object TestIdGenerator : IdGenerator {
     private val transactionGenerator = StringIdGenerator("transaction_id")

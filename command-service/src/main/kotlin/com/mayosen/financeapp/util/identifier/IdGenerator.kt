@@ -1,7 +1,7 @@
-package com.mayosen.financeapp.util
+package com.mayosen.financeapp.util.identifier
 
 interface IdGenerator {
-    fun generateTransactionId(): String
+    fun generateCommandId(): String
 
     fun generateEventId(): String
 

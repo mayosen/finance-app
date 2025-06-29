@@ -4,7 +4,7 @@ import com.mayosen.financeapp.command.api.ReplayEventsCommand
 import com.mayosen.financeapp.event.EventPublisher
 import com.mayosen.financeapp.event.EventStore
 import com.mayosen.financeapp.event.ResetProjectionsEvent
-import com.mayosen.financeapp.util.IdGenerator
+import com.mayosen.financeapp.util.identifier.IdGenerator
 import org.springframework.stereotype.Service
 
 @Service

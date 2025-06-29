@@ -8,7 +8,7 @@ import com.mayosen.financeapp.event.TransferPerformedEvent
 import com.mayosen.financeapp.event.WithdrawalPerformedEvent
 import com.mayosen.financeapp.exception.AccountNotFoundException
 import com.mayosen.financeapp.snapshot.AccountSnapshot
-import com.mayosen.financeapp.util.IdGenerator
+import com.mayosen.financeapp.util.identifier.IdGenerator
 import java.math.BigDecimal
 
 /**

@@ -14,7 +14,7 @@ import com.mayosen.financeapp.event.EventStore
 import com.mayosen.financeapp.exception.EventProcessingException
 import com.mayosen.financeapp.snapshot.CreateSnapshotStrategy
 import com.mayosen.financeapp.snapshot.SnapshotStore
-import com.mayosen.financeapp.util.IdGenerator
+import com.mayosen.financeapp.util.identifier.IdGenerator
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
 

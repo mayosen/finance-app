@@ -6,7 +6,7 @@ import com.mayosen.financeapp.command.api.ReplayEventsCommand
 import com.mayosen.financeapp.command.api.admin.AdminApi
 import com.mayosen.financeapp.command.api.admin.AdminCommandResponse
 import com.mayosen.financeapp.command.api.admin.ReplayEventsRequest
-import com.mayosen.financeapp.util.IdGenerator
+import com.mayosen.financeapp.util.identifier.IdGenerator
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController

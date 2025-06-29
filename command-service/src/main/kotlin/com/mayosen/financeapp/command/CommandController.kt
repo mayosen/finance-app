@@ -13,7 +13,7 @@ import com.mayosen.financeapp.command.api.v1.DeleteAccountRequest
 import com.mayosen.financeapp.command.api.v1.DepositRequest
 import com.mayosen.financeapp.command.api.v1.TransferRequest
 import com.mayosen.financeapp.command.api.v1.WithdrawRequest
-import com.mayosen.financeapp.util.IdGenerator
+import com.mayosen.financeapp.util.identifier.IdGenerator
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController

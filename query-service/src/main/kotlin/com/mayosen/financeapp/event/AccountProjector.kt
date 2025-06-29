@@ -5,7 +5,7 @@ import com.mayosen.financeapp.projection.account.AccountSummaryStore
 import com.mayosen.financeapp.projection.transaction.Transaction
 import com.mayosen.financeapp.projection.transaction.TransactionStore
 import com.mayosen.financeapp.projection.transaction.TransactionType
-import com.mayosen.financeapp.util.IdGenerator
+import com.mayosen.financeapp.util.identifier.IdGenerator
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.support.TransactionTemplate
