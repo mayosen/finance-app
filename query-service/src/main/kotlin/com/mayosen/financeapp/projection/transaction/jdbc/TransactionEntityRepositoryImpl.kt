@@ -24,7 +24,7 @@ class TransactionEntityRepositoryImpl(
                 append("WHERE account_id = :accountId ")
                 if (from != null) append("AND timestamp >= :from ")
                 if (to != null) append("AND timestamp <= :to ")
-                append("ORDER BY timestamp DESC ")
+                append("ORDER BY timestamp ")
                 append("LIMIT :limit OFFSET :offset ")
             }
         val params =

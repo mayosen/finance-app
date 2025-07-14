@@ -9,7 +9,6 @@ import com.mayosen.financeapp.projection.transaction.jdbc.mapper.DtoToEntityMapp
 import com.mayosen.financeapp.projection.transaction.jdbc.mapper.EntityToDtoMapper.toTransaction
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Component
-import org.springframework.util.Assert
 
 @Component
 class JdbcTransactionStore(
@@ -33,10 +32,6 @@ class JdbcTransactionStore(
                     offset = pagination.offset,
                     limit = pagination.limit,
                 )
-
-        Assert.isTrue(entities.size == total) {
-            "Number of entities was expected to be equal to $total, but was ${entities.size}"
-        }
 
         val transactions = entities.map { it.toTransaction() }
         val hasMore = pagination.offset + transactions.size < total

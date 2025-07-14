@@ -23,10 +23,13 @@ fun generateGetAccountSummaryResponse(): GetAccountSummaryResponse =
         updatedAt = INSTANT,
     )
 
-fun generateGetTransactionHistoryResponse(transactions: List<Transaction> = listOf(generateTransaction())): GetTransactionHistoryResponse =
+fun generateGetTransactionHistoryResponse(
+    transactions: List<Transaction> = listOf(generateTransaction()),
+    pagination: Pagination = generatePagination(),
+): GetTransactionHistoryResponse =
     GetTransactionHistoryResponse(
         transactions = transactions,
-        pagination = generatePagination(),
+        pagination = pagination,
     )
 
 fun generateTransaction(
@@ -43,10 +46,13 @@ fun generateTransaction(
         relatedAccountId = null,
     )
 
-fun generatePagination(): Pagination =
+fun generatePagination(
+    hasMore: Boolean = false,
+    total: Int = 1,
+): Pagination =
     Pagination(
-        hasMore = false,
-        total = 1,
+        hasMore = hasMore,
+        total = total,
     )
 
 fun generateListAccountsResponse(accounts: List<Account> = listOf(generateAccount())): ListAccountsResponse =
