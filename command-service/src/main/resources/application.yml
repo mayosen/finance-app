@@ -30,3 +30,11 @@ app:
   snapshot:
     strategy:
       every-times: 5
+
+logbook:
+  format:
+    style: curl
+
+logging:
+  level:
+    org.zalando: TRACE

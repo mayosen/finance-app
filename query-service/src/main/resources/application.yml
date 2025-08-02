@@ -27,3 +27,11 @@ app:
   kafka:
     events:
       topic: financeapp-events
+
+logbook:
+  format:
+    style: curl
+
+logging:
+  level:
+    org.zalando: TRACE
