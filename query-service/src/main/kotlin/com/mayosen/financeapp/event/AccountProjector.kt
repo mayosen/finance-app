@@ -20,9 +20,14 @@ class AccountProjector(
     private val transactionStore: TransactionStore,
     private val transactionTemplate: TransactionTemplate,
     private val eventToTransactionMapper: EventToTransactionMapper,
+    private val eventDeduplicator: EventDeduplicator,
 ) {
     fun project(event: Event) {
-        // TODO: Check if event is already applied in read model. Do not process it twice.
+        if (eventDeduplicator.hasEventBeenProcessed(event)) {
+            logger.info { "Event '${event.accountId}' has already been processed. Skipping changes" }
+            return
+        }
+
         when (event) {
             is AccountCreatedEvent -> applyAccountCreated(event)
             is DepositPerformedEvent -> applyDepositPerformed(event)

@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: FAPP-7-add-index_source_event_id_for-table_transaction
+      author: mayosen
+      changes:
+        - createIndex:
+            indexName: idx_source_event_id
+            tableName: transaction
+            columns:
+              - column:
+                  name: source_event_id

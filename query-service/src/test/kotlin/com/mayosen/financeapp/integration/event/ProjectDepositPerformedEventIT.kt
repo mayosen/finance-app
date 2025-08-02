@@ -9,6 +9,7 @@ import com.mayosen.financeapp.test.AMOUNT_100
 import com.mayosen.financeapp.test.AMOUNT_50
 import com.mayosen.financeapp.test.EVENT_ID_2
 import com.mayosen.financeapp.test.INSTANT
+import com.mayosen.financeapp.test.INSTANT_2
 import com.mayosen.financeapp.test.OWNER_ID
 import com.mayosen.financeapp.test.TRANSACTION_ID
 import com.mayosen.financeapp.test.assertions.isCloseToNow
@@ -69,5 +70,65 @@ class ProjectDepositPerformedEventIT : BaseIntegrationTest() {
         assertThat(transaction.timestamp).isCloseToNow()
         assertThat(transaction.relatedAccountId).isNull()
         assertThat(transaction.isNewEntity).isFalse()
+    }
+
+    @Test
+    fun `happy path - should not process DepositPerformedEvent twice`() {
+        // given: account summary saved
+        val eventId1 = idGenerator.generateEventId()
+        val eventId2 = idGenerator.generateEventId()
+
+        val entity =
+            AccountSummaryEntity(
+                accountId = ACCOUNT_ID,
+                ownerId = OWNER_ID,
+                balance = AMOUNT_50,
+                updatedAt = INSTANT,
+                sourceEventId = eventId1,
+                isNewEntity = true,
+            )
+        jdbcTemplate.save(entity)
+
+        // given: transaction saved
+        val transaction =
+            TransactionEntity(
+                transactionId = idGenerator.generateTransactionId(),
+                accountId = ACCOUNT_ID,
+                sourceEventId = eventId2,
+                type = TransactionType.DEPOSIT,
+                amount = AMOUNT_50,
+                timestamp = INSTANT_2,
+                relatedAccountId = null,
+                isNewEntity = true,
+            )
+
+        jdbcTemplate.save(transaction)
+
+        // given
+        val event =
+            DepositPerformedEvent(
+                eventId = eventId2,
+                accountId = ACCOUNT_ID,
+                amount = AMOUNT_50,
+            )
+
+        // step: publish
+        eventKafkaTemplate.send(event.toProducerRecord())
+
+        // step: verify account summary has not been changed
+        baseAwait {
+            val entities = jdbcTemplate.findAll(AccountSummaryEntity::class.java)
+            assertThat(entities).hasSize(1)
+
+            val expectedEvent = entity.copy(isNewEntity = false)
+            assertThat(entities.first()).isEqualTo(expectedEvent)
+        }
+
+        // step: verify transaction has not been added
+        val transactions = jdbcTemplate.findAll(TransactionEntity::class.java)
+        assertThat(transactions).hasSize(1)
+
+        val expectedTransaction = transaction.copy(isNewEntity = false)
+        assertThat(transactions.first()).isEqualTo(expectedTransaction)
     }
 }

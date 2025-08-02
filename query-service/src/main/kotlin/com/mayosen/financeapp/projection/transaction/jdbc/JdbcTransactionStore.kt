@@ -1,5 +1,6 @@
 package com.mayosen.financeapp.projection.transaction.jdbc
 
+import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.projection.transaction.Pagination
 import com.mayosen.financeapp.projection.transaction.TimePeriod
 import com.mayosen.financeapp.projection.transaction.Transaction
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component
 class JdbcTransactionStore(
     private val transactionEntityRepository: TransactionEntityRepository,
 ) : TransactionStore {
+    override fun hasBeenUpdatedBy(event: Event): Boolean = transactionEntityRepository.existsBySourceEventId(event.eventId)
+
     override fun findByAccountId(
         accountId: String,
         timePeriod: TimePeriod?,

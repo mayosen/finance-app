@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository
 interface TransactionEntityRepository :
     CrudRepository<TransactionEntity, String>,
     TransactionEntityCustomRepository {
+    fun existsBySourceEventId(sourceEventId: String): Boolean
+
     @Query("DELETE FROM transaction WHERE account_id = :accountId")
     @Modifying
     fun deleteAllByAccountId(accountId: String)

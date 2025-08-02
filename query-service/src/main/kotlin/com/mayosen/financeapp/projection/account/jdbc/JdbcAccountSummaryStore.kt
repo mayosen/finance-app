@@ -1,5 +1,8 @@
 package com.mayosen.financeapp.projection.account.jdbc
 
+import com.mayosen.financeapp.event.AccountCreatedEvent
+import com.mayosen.financeapp.event.AccountDeletedEvent
+import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.projection.account.AccountSummary
 import com.mayosen.financeapp.projection.account.AccountSummaryStore
 import org.apache.logging.log4j.kotlin.Logging
@@ -10,6 +13,15 @@ import kotlin.jvm.optionals.getOrNull
 class JdbcAccountSummaryStore(
     private val accountSummaryEntityRepository: AccountSummaryEntityRepository,
 ) : AccountSummaryStore {
+    override fun hasBeenUpdatedBy(event: Event): Boolean {
+        if (event is AccountCreatedEvent) {
+            return accountSummaryEntityRepository.existsById(event.accountId)
+        } else if (event is AccountDeletedEvent) {
+            return !accountSummaryEntityRepository.existsById(event.accountId)
+        }
+        return false
+    }
+
     override fun findAllByOwnerId(ownerId: String): List<AccountSummary> {
         val entities = accountSummaryEntityRepository.findAllByOwnerId(ownerId)
         return entities
