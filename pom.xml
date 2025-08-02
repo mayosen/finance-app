@@ -120,6 +120,23 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>com.github.gantsign.maven</groupId>
+                    <artifactId>ktlint-maven-plugin</artifactId>
+                    <version>3.5.0</version>
+                    <executions>
+                        <execution>
+                            <id>check</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <verbose>true</verbose>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
