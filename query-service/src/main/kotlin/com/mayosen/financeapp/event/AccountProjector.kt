@@ -1,11 +1,9 @@
 package com.mayosen.financeapp.event
 
+import com.mayosen.financeapp.event.mapper.EventToTransactionMapper
 import com.mayosen.financeapp.projection.account.AccountSummary
 import com.mayosen.financeapp.projection.account.AccountSummaryStore
-import com.mayosen.financeapp.projection.transaction.Transaction
 import com.mayosen.financeapp.projection.transaction.TransactionStore
-import com.mayosen.financeapp.projection.transaction.TransactionType
-import com.mayosen.financeapp.util.identifier.IdGenerator
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.support.TransactionTemplate
@@ -21,7 +19,7 @@ class AccountProjector(
     private val accountSummaryStore: AccountSummaryStore,
     private val transactionStore: TransactionStore,
     private val transactionTemplate: TransactionTemplate,
-    private val idGenerator: IdGenerator,
+    private val eventToTransactionMapper: EventToTransactionMapper,
 ) {
     fun project(event: Event) {
         // TODO: Check if event is already applied in read model. Do not process it twice.
@@ -60,8 +58,9 @@ class AccountProjector(
                 sourceEventId = event.eventId,
             )
         accountSummaryStore.save(updated)
-        val transaction = event.toTransaction()
-        transactionStore.save(transaction)
+
+        val transactions = eventToTransactionMapper.toTransactions(event)
+        transactionStore.saveAll(transactions)
     }
 
     private fun applyWithdrawalPerformed(event: WithdrawalPerformedEvent) {
@@ -76,8 +75,9 @@ class AccountProjector(
                 sourceEventId = event.eventId,
             )
         accountSummaryStore.save(updated)
-        val transaction = event.toTransaction()
-        transactionStore.save(transaction)
+
+        val transactions = eventToTransactionMapper.toTransactions(event)
+        transactionStore.saveAll(transactions)
     }
 
     private fun applyTransferPerformed(event: TransferPerformedEvent) {
@@ -104,56 +104,9 @@ class AccountProjector(
 
         accountSummaryStore.saveAll(listOf(updatedSource, updatedDestination))
 
-        val sourceTransaction = event.toSourceTransaction()
-        val destinationTransaction = event.toDestinationTransaction()
-        transactionStore.saveAll(listOf(sourceTransaction, destinationTransaction))
+        val transactions = eventToTransactionMapper.toTransactions(event)
+        transactionStore.saveAll(transactions)
     }
-
-    private fun DepositPerformedEvent.toTransaction(): Transaction =
-        Transaction(
-            accountId = accountId,
-            sourceEventId = eventId,
-            transactionId = idGenerator.generateTransactionId(),
-            type = TransactionType.DEPOSIT,
-            amount = amount,
-            timestamp = timestamp,
-            relatedAccountId = null,
-        )
-
-    private fun WithdrawalPerformedEvent.toTransaction(): Transaction =
-        Transaction(
-            accountId = accountId,
-            sourceEventId = eventId,
-            transactionId = idGenerator.generateTransactionId(),
-            type = TransactionType.WITHDRAWAL,
-            amount = amount,
-            timestamp = timestamp,
-            relatedAccountId = null,
-        )
-
-    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-    private fun TransferPerformedEvent.toSourceTransaction(): Transaction =
-        Transaction(
-            accountId = accountId,
-            sourceEventId = eventId,
-            transactionId = idGenerator.generateTransactionId(),
-            type = TransactionType.TRANSFER_OUT,
-            amount = amount,
-            timestamp = timestamp,
-            relatedAccountId = toAccountId!!,
-        )
-
-    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-    private fun TransferPerformedEvent.toDestinationTransaction(): Transaction =
-        Transaction(
-            accountId = toAccountId,
-            sourceEventId = eventId,
-            transactionId = idGenerator.generateTransactionId(),
-            type = TransactionType.TRANSFER_IN,
-            amount = amount,
-            timestamp = timestamp,
-            relatedAccountId = accountId!!,
-        )
 
     private fun applyAccountDeleted(event: AccountDeletedEvent) {
         logger.info { "Deleting account summary, deleting transactions. Event: $event" }
