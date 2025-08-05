@@ -2,15 +2,15 @@ package com.mayosen.financeapp.event
 
 import com.mayosen.financeapp.projection.account.AccountSummaryStore
 import com.mayosen.financeapp.projection.transaction.TransactionStore
+import com.mayosen.financeapp.util.transaction.TransactionManager
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
-import org.springframework.transaction.support.TransactionTemplate
 
 @Service
 class ServiceEventProcessor(
     private val accountSummaryStore: AccountSummaryStore,
     private val transactionStore: TransactionStore,
-    private val transactionTemplate: TransactionTemplate,
+    private val transactionManager: TransactionManager,
 ) {
     fun process(event: ServiceEvent) {
         when (event) {
@@ -20,9 +20,8 @@ class ServiceEventProcessor(
     }
 
     fun processResetProjections(event: ResetProjectionsEvent) {
-        // TODO: Block rows
         logger.info { "Deleting projections for accountId='${event.accountId}'. Event: $event" }
-        transactionTemplate.executeWithoutResult {
+        transactionManager.executeInTransaction {
             accountSummaryStore.deleteByAccountId(event.accountId)
             transactionStore.deleteAllByAccountId(event.accountId)
         }

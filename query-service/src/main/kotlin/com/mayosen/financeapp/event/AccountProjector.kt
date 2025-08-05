@@ -4,12 +4,10 @@ import com.mayosen.financeapp.event.mapper.EventToTransactionMapper
 import com.mayosen.financeapp.projection.account.AccountSummary
 import com.mayosen.financeapp.projection.account.AccountSummaryStore
 import com.mayosen.financeapp.projection.transaction.TransactionStore
+import com.mayosen.financeapp.util.transaction.TransactionManager
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
-import org.springframework.transaction.support.TransactionTemplate
 import java.math.BigDecimal
-
-// TODO: Здесь и в других местах групповые изменения выполнять в транзакции. TransactionTemplate, например
 
 /**
  * Обновляет Read Model на основе событий.
@@ -18,7 +16,7 @@ import java.math.BigDecimal
 class AccountProjector(
     private val accountSummaryStore: AccountSummaryStore,
     private val transactionStore: TransactionStore,
-    private val transactionTemplate: TransactionTemplate,
+    private val transactionManager: TransactionManager,
     private val eventToTransactionMapper: EventToTransactionMapper,
     private val eventDeduplicator: EventDeduplicator,
 ) {
@@ -62,10 +60,12 @@ class AccountProjector(
                 updatedAt = event.timestamp,
                 sourceEventId = event.eventId,
             )
-        accountSummaryStore.save(updated)
-
         val transactions = eventToTransactionMapper.toTransactions(event)
-        transactionStore.saveAll(transactions)
+
+        transactionManager.executeInTransaction {
+            accountSummaryStore.save(updated)
+            transactionStore.saveAll(transactions)
+        }
     }
 
     private fun applyWithdrawalPerformed(event: WithdrawalPerformedEvent) {
@@ -79,10 +79,12 @@ class AccountProjector(
                 updatedAt = event.timestamp,
                 sourceEventId = event.eventId,
             )
-        accountSummaryStore.save(updated)
-
         val transactions = eventToTransactionMapper.toTransactions(event)
-        transactionStore.saveAll(transactions)
+
+        transactionManager.executeInTransaction {
+            accountSummaryStore.save(updated)
+            transactionStore.saveAll(transactions)
+        }
     }
 
     private fun applyTransferPerformed(event: TransferPerformedEvent) {
@@ -107,16 +109,18 @@ class AccountProjector(
                 sourceEventId = event.eventId,
             )
 
-        accountSummaryStore.saveAll(listOf(updatedSource, updatedDestination))
-
         val transactions = eventToTransactionMapper.toTransactions(event)
-        transactionStore.saveAll(transactions)
+
+        transactionManager.executeInTransaction {
+            accountSummaryStore.saveAll(listOf(updatedSource, updatedDestination))
+            transactionStore.saveAll(transactions)
+        }
     }
 
     private fun applyAccountDeleted(event: AccountDeletedEvent) {
         logger.info { "Deleting account summary, deleting transactions. Event: $event" }
 
-        transactionTemplate.executeWithoutResult {
+        transactionManager.executeInTransaction {
             accountSummaryStore.deleteByAccountId(event.accountId)
             transactionStore.deleteAllByAccountId(event.accountId)
         }

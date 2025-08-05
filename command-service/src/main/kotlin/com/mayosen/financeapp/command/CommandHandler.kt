@@ -15,6 +15,7 @@ import com.mayosen.financeapp.exception.EventProcessingException
 import com.mayosen.financeapp.snapshot.CreateSnapshotStrategy
 import com.mayosen.financeapp.snapshot.SnapshotStore
 import com.mayosen.financeapp.util.identifier.IdGenerator
+import com.mayosen.financeapp.util.transaction.TransactionManager
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
 
@@ -28,6 +29,7 @@ class CommandHandler(
     private val eventPublisher: EventPublisher,
     private val createSnapshotStrategy: CreateSnapshotStrategy,
     private val idGenerator: IdGenerator,
+    private val transactionManager: TransactionManager,
 ) {
     fun handleCreateAccount(command: CreateAccountCommand) {
         logger.info { "Processing CreateAccountCommand: $command" }
@@ -119,15 +121,15 @@ class CommandHandler(
             return
         }
 
-        // TODO: In transaction
         try {
-            eventStore.saveAll(newEvents)
-            eventPublisher.publishAll(newEvents)
-
-            if (createSnapshotStrategy.shouldCreateSnapshot(aggregate)) {
-                snapshotStore.save(aggregate)
+            transactionManager.executeInTransaction {
+                eventStore.saveAll(newEvents)
+                if (createSnapshotStrategy.shouldCreateSnapshot(aggregate)) {
+                    snapshotStore.save(aggregate)
+                }
             }
 
+            eventPublisher.publishAll(newEvents)
             logger.info { "Successfully processed events for account ${aggregate.accountId}" }
             aggregate.markEventsCommitted()
         } catch (ex: Exception) {
