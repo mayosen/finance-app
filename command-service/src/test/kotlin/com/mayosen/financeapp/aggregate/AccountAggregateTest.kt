@@ -20,9 +20,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-// TODO: Use @DisplayName
-// TODO: Add generators
-
 class AccountAggregateTest {
     private lateinit var aggregate: AccountAggregate
 

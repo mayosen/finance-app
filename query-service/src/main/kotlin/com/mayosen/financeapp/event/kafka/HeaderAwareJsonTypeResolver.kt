@@ -14,7 +14,6 @@ class HeaderAwareJsonTypeResolver(
         data: ByteArray,
         headers: Headers,
     ): JavaType {
-        // TODO: Throw if header is null
         val typeHeader =
             headers.lastHeader(EVENT_TYPE_KEY)
                 ?: throw IllegalArgumentException("Event event type header $EVENT_TYPE_KEY not found")
