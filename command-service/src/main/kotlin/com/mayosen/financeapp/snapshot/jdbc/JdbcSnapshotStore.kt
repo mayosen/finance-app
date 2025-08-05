@@ -19,7 +19,6 @@ class JdbcSnapshotStore(
                 AccountSnapshot(
                     accountId = it.accountId,
                     balance = it.balance,
-                    created = true,
                     lastSequenceNumber = it.lastSequenceNumber,
                     timestamp = it.timestamp,
                 )

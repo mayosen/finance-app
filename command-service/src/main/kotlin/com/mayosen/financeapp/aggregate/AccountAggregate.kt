@@ -21,7 +21,6 @@ class AccountAggregate(
 ) {
     var balance: BigDecimal = BigDecimal.ZERO
 
-    @Deprecated("Unused?")
     var created: Boolean = false
 
     private val newEvents = mutableListOf<Event>()
@@ -29,14 +28,13 @@ class AccountAggregate(
     fun loadFromSnapshot(snapshot: AccountSnapshot) {
         require(snapshot.accountId == accountId) { "Snapshot ID does not match aggregate ID" }
         this.balance = snapshot.balance
-        this.created = snapshot.created
+        this.created = true
     }
 
     fun toSnapshot(lastSequenceNumber: Long): AccountSnapshot =
         AccountSnapshot(
             accountId = accountId,
             balance = balance,
-            created = created,
             lastSequenceNumber = lastSequenceNumber,
         )
 

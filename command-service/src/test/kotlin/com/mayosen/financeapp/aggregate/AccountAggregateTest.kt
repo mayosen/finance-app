@@ -37,7 +37,6 @@ class AccountAggregateTest {
                 AccountSnapshot(
                     accountId = ACCOUNT_ID,
                     balance = AMOUNT_100,
-                    created = true,
                     lastSequenceNumber = LAST_SEQUENCE_NUMBER,
                 )
 
@@ -64,7 +63,6 @@ class AccountAggregateTest {
             // then
             assertThat(snapshot.accountId).isEqualTo(ACCOUNT_ID)
             assertThat(snapshot.balance).isEqualTo(AMOUNT_100)
-            assertThat(snapshot.created).isTrue()
             assertThat(snapshot.lastSequenceNumber).isEqualTo(LAST_SEQUENCE_NUMBER)
             assertThat(snapshot.timestamp).isCloseToNow()
         }
