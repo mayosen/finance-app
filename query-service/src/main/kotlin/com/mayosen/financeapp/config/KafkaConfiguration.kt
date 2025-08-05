@@ -3,8 +3,6 @@ package com.mayosen.financeapp.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.event.kafka.HeaderAwareJsonTypeResolver
-import org.apache.kafka.clients.consumer.Consumer
-import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
@@ -13,12 +11,10 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
-import org.springframework.kafka.listener.CommonErrorHandler
+import org.springframework.kafka.listener.CommonLoggingErrorHandler
 import org.springframework.kafka.listener.ContainerProperties
-import org.springframework.kafka.listener.MessageListenerContainer
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
 import org.springframework.kafka.support.serializer.JsonDeserializer
-import java.lang.Exception
 
 @Configuration
 class KafkaConfiguration {
@@ -55,42 +51,20 @@ class KafkaConfiguration {
     fun kafkaListenerContainerFactory(
         consumerFactory: ConsumerFactory<String, Event>,
     ): ConcurrentKafkaListenerContainerFactory<String, Event> {
-        val factory = ConcurrentKafkaListenerContainerFactory<String, Event>()
-        factory.consumerFactory = consumerFactory
-        factory.setConcurrency(1)
-        factory.setAutoStartup(true)
-        factory.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
-
-        factory.setCommonErrorHandler(
-            // TODO: Use default one
-            object : CommonErrorHandler {
-                override fun handleRemaining(
-                    thrownException: Exception,
-                    records: MutableList<ConsumerRecord<*, *>>,
-                    consumer: Consumer<*, *>,
-                    container: MessageListenerContainer,
-                ) {
-                    super.handleRemaining(thrownException, records, consumer, container)
+        val commonErrorHandler =
+            CommonLoggingErrorHandler()
+                .apply {
+                    isAckAfterHandle = false
                 }
 
-                override fun handleOne(
-                    thrownException: Exception,
-                    record: ConsumerRecord<*, *>,
-                    consumer: Consumer<*, *>,
-                    container: MessageListenerContainer,
-                ): Boolean = super.handleOne(thrownException, record, consumer, container)
-
-                override fun handleOtherException(
-                    thrownException: Exception,
-                    consumer: Consumer<*, *>,
-                    container: MessageListenerContainer,
-                    batchListener: Boolean,
-                ) {
-                    super.handleOtherException(thrownException, consumer, container, batchListener)
-                }
-            },
-        )
-        return factory
+        return ConcurrentKafkaListenerContainerFactory<String, Event>()
+            .apply {
+                this.consumerFactory = consumerFactory
+                setConcurrency(1)
+                setAutoStartup(true)
+                containerProperties.ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
+                setCommonErrorHandler(commonErrorHandler)
+            }
     }
 
     companion object {

@@ -9,7 +9,6 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.header.Header
 import org.apache.kafka.common.header.internals.RecordHeader
 import org.apache.logging.log4j.kotlin.Logging
-import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
@@ -20,8 +19,7 @@ class KafkaEventPublisher(
     private val topic: String,
     private val objectMapper: ObjectMapper,
     private val kafkaTemplate: KafkaTemplate<String, String>,
-) : EventPublisher,
-    InitializingBean {
+) : EventPublisher {
     override fun publish(event: Event) {
         try {
             val producerRecord = event.toProducerRecord()
@@ -41,12 +39,6 @@ class KafkaEventPublisher(
 
     override fun publishAll(events: List<Event>) {
         events.forEach(::publish)
-    }
-
-    override fun afterPropertiesSet() {
-        // TODO: Хотя здесь уже по умолчанию стоит 5s, очень странно
-        // https://stackoverflow.com/a/49494338/18989230
-        // kafkaTemplate.setCloseTimeout(Duration.ofSeconds(5))
     }
 
     fun Event.toProducerRecord(): ProducerRecord<String, String> {
