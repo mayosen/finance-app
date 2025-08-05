@@ -32,7 +32,7 @@ class AccountProjector(
             is WithdrawalPerformedEvent -> applyWithdrawalPerformed(event)
             is TransferPerformedEvent -> applyTransferPerformed(event)
             is AccountDeletedEvent -> applyAccountDeleted(event)
-            else -> error("Unhandled event type: ${event::class.simpleName}")
+            else -> throw IllegalArgumentException("Unhandled event type: ${event::class.simpleName}")
         }
     }
 

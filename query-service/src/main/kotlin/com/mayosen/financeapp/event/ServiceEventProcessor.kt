@@ -15,7 +15,7 @@ class ServiceEventProcessor(
     fun process(event: ServiceEvent) {
         when (event) {
             is ResetProjectionsEvent -> processResetProjections(event)
-            else -> error("Unhandled event type: ${event::class.simpleName}")
+            else -> throw IllegalArgumentException("Unhandled event type: ${event::class.simpleName}")
         }
     }
 
