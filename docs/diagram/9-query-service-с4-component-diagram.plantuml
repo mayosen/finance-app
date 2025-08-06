@@ -1,11 +1,9 @@
 @startuml C4_Component
-!include <c4/C4_Component.puml>
+'!include <c4/C4_Component.puml>
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 
 LAYOUT_LEFT_RIGHT()
-'skinparam nodesep 20
 skinparam ranksep 10
-'skinparam Padding 2
-'scale max 1024 width
 
 Person(user, "Пользователь", "Использует приложение\nдля управления счётами\nи транзакциями")
 
