@@ -1,0 +1,27 @@
+@startuml UseCase
+
+skinparam dpi 150
+skinparam nodesep 10
+skinparam ranksep 110
+
+actor Пользователь as User
+
+package "Финансовое приложение" {
+  usecase "Получить историю\n транзакций" as GetHistory
+  usecase "Просмотреть баланс" as GetBalance
+  usecase "Перевести средства\nмежду счетами" as Transfer
+  usecase "Списать средства" as Withdraw
+  usecase "Пополнить счёт" as Deposit
+  usecase "Создать счёт" as CreateAccount
+  usecase "Удалить счёт" as DeleteAccount
+}
+
+User --> CreateAccount
+User --> DeleteAccount
+User --> Deposit
+User --> Withdraw
+User --> Transfer
+User --> GetBalance
+User --> GetHistory
+
+@enduml

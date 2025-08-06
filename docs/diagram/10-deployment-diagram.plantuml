@@ -1,0 +1,46 @@
+@startuml
+skinparam linetype ortho
+left to right direction
+
+node "Docker Host" as host {
+  node "Command Service Container" as commandServiceContainer {
+    artifact "command-service.jar" as commandServiceJar
+    artifact "H2 Database\n(data.mv.db)" as h2CommandDatabase
+  }
+
+  node "Query Service Container" as queryServiceContainer {
+    artifact "query-service.jar" as queryServiceJar
+    artifact "H2 Database\n(data.mv.db)" as h2QueryDatabase
+  }
+
+  node "Kafka Broker Container" as kafka {
+    component "Kafka Broker" as kafkaComponent
+  }
+
+  node "Zookeeper Container" as zk {
+    component "Zookeeper" as zookepComponent
+  }
+}
+
+node "Client Device" as client {
+  artifact "User Application" as userApp
+}
+
+' 1. Коммуникация пользователей с сервисами
+client --> commandServiceContainer      : HTTP
+client --> queryServiceContainer      : HTTP
+
+' 2. Событийный поток через Kafka
+commandServiceContainer --> kafkaComponent   : Публикует событий
+kafkaComponent <-- queryServiceContainer   : Читает события
+kafkaComponent <-- zookepComponent   : Координирует
+
+' 3. Запуск артефактов
+commandServiceContainer --> commandServiceJar
+queryServiceContainer --> queryServiceJar
+
+' 4. Встроенные БД H2
+commandServiceContainer --> h2CommandDatabase       : JDBC
+queryServiceContainer --> h2QueryDatabase       : JDBC
+
+@enduml

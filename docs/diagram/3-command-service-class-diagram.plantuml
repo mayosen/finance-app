@@ -1,0 +1,16 @@
+@startuml
+package "Command Service" {
+    class CommandController
+    interface CommandGateway
+    class CommandHandler
+    class AccountAggregate
+    interface EventStore
+    interface EventPublisher
+
+    CommandController ..> CommandGateway
+    CommandGateway ..> CommandHandler
+    CommandHandler ..> AccountAggregate
+    CommandHandler ..> EventStore
+    CommandHandler ..> EventPublisher
+}
+@enduml

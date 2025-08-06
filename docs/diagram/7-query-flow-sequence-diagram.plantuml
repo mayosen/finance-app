@@ -1,0 +1,22 @@
+@startuml
+actor User as "Пользователь"
+participant QueryController as "QueryController"
+participant QueryGateway as "QueryGateway"
+participant QueryHandler as "QueryHandler"
+participant AccountSummaryStore as "AccountSummaryStore"
+participant TransactionHistoryStore as "TransactionHistoryStore"
+
+User -> QueryController: Отправка запроса чтения
+QueryController -> QueryGateway: Передача запроса
+QueryGateway -> QueryHandler: Обработка запроса
+
+alt
+    QueryHandler <-> AccountSummaryStore: Чтение баланса
+else
+    QueryHandler <-> TransactionHistoryStore: Чтение истории транзакций
+end
+
+QueryGateway <- QueryHandler: Возврат данных
+QueryController <- QueryGateway: Возврат данных
+User <- QueryController: Возврат данных
+@enduml
