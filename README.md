@@ -38,11 +38,11 @@
 
 Диаграмма компонентов сервиса команд (C4 Component diagram)
 
-![Диаграмма компонентов сервиса команд](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/8-command-service-c4-component-diagram.plantuml)
+![Диаграмма компонентов сервиса команд](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/8-command-service-с4-component-diagram.plantuml)
 
 Диаграмма компонентов сервиса запросов (C4 Component diagram)
 
-![Диаграмма компонентов сервиса запросов](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/9-query-service-c4-component-diagram.plantuml)
+![Диаграмма компонентов сервиса запросов](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/9-query-service-с4-component-diagram.plantuml)
 
 Диаграмма развертывания (Deployment diagram)
 
