@@ -15,8 +15,9 @@ System_Boundary(financeSystem, "Финансовое приложение") {
         Component(transactionHistoryStore, "JdbcTransactionHistoryStore", "Spring Data JDBC", "Хранение истории транзакций")
         Component(eventSubscriber, "KafkaEventSubscriber", "Spring Kafka", "Подписка на события из шины")
         Component(accountProjector, "AccountProjector", "Kotlin, Spring Boot", "Обновление проекций")
+        Component(serviceEventProcessor, "ServiceEventProcessor", "Kotlin, Spring Boot", "Обработка служебных событий")
     }
-    ContainerDb(readModelDb, "Read Model DB", "H2", "Хранит проекции\nсчёта и истории\nтранзакций")
+    ContainerDb(readModelDb, "Read Model DB", "PostgreSQL", "Хранит проекции\nсчёта и истории\nтранзакций")
     Container(eventBus, "Event Bus", "Apache Kafka", "Шина событий")
 }
 
@@ -27,6 +28,7 @@ Rel(queryHandler, accountSummaryStore, "Читает проекцию счёта
 Rel(queryHandler, transactionHistoryStore, "Читает историю транзакций")
 Rel(eventSubscriber, eventBus, "Слушает события")
 Rel(eventSubscriber, accountProjector, "Публикует события в проектор")
+Rel(eventSubscriber, serviceEventProcessor, "Публикует события в обработчик")
 Rel(accountProjector, accountSummaryStore, "Обновляет проекции")
 Rel(accountProjector, transactionHistoryStore, "Обновляет проекции")
 Rel(accountSummaryStore, readModelDb, "Использует")

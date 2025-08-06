@@ -6,6 +6,8 @@ skinparam ranksep 110
 
 actor Пользователь as User
 
+actor Администратор as Admin
+
 package "Финансовое приложение" {
   usecase "Получить историю\n транзакций" as GetHistory
   usecase "Просмотреть баланс" as GetBalance
@@ -14,6 +16,8 @@ package "Финансовое приложение" {
   usecase "Пополнить счёт" as Deposit
   usecase "Создать счёт" as CreateAccount
   usecase "Удалить счёт" as DeleteAccount
+
+  usecase "Сбросить проекции" as ReplayEvents
 }
 
 User --> CreateAccount
@@ -23,5 +27,7 @@ User --> Withdraw
 User --> Transfer
 User --> GetBalance
 User --> GetHistory
+
+Admin --> ReplayEvents
 
 @enduml

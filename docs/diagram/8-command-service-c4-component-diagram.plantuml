@@ -8,21 +8,23 @@ Person(user, "Пользователь", "Использует приложен�
 
 System_Boundary(financeSystem, "Финансовое приложение") {
     System_Boundary(commandService, "Command Service") {
-        Component(commandController, "CommandController", "Kotlin, Spring Boot", "REST-контроллер\nдля команд")
-        Component(commandGateway, "SyncCommandGateway", "Kotlin, Spring Boot", "Фасад для\nобработки команд")
-        Component(commandHandler, "CommandHandler", "Kotlin, Spring Boot", "Логика обработки\nкоманд")
+        Component(commandController, "CommandController", "Kotlin, Spring Boot", "REST-контроллер \nдля команд")
+        Component(commandGateway, "SyncCommandGateway", "Kotlin, Spring Boot", "Фасад для \nобработки команд")
+        Component(commandHandler, "CommandHandler", "Kotlin, Spring Boot", "Логика обработки \nкоманд")
+        Component(adminCommandHandler, "AdminCommandHandler", "Kotlin, Spring Boot", "Логика обработки \nслужебных команд")
         Component(accountAggregate, "AccountAggregate", "Kotlin", "Доменный агрегат")
         Component(eventStore, "JdbcEventStore", "Spring Data JDBC", "Хранилище событий")
         Component(snapshotStore, "JdbcSnapshotStore", "Spring Data JDBС", "Хранилище снимков")
-        Component(eventPublisher, "KafkaEventPublisher", "Spring Kafka", "Публикация событий\nв Kafka")
+        Component(eventPublisher, "KafkaEventPublisher", "Spring Kafka", "Публикация событий \nв Kafka")
     }
-    ContainerDb(eventDb, "Event DB", "H2", "Хранит события\nи снэпшоты")
+    ContainerDb(eventDb, "Event DB", "PostgreSQL", "Хранит события\nи снэпшоты")
     Container(eventBus, "Event Bus", "Apache Kafka", "Шина событий")
 }
 
-Rel(user, commandController, "Отправляет\nкоманды")
-Rel(commandController, commandGateway, "Вызывает\nфасад")
-Rel(commandGateway, commandHandler, "Передаёт\nкоманды")
+Rel(user, commandController, "Отправляет \nкоманды")
+Rel(commandController, commandGateway, "Вызывает \nфасад")
+Rel(commandGateway, commandHandler, "Передаёт \nкоманды")
+Rel(commandGateway, adminCommandHandler, "Передаёт \nслужебные команды")
 Rel(commandHandler, accountAggregate, "Использует агрегат для бизнес-логики")
 Rel(commandHandler, eventStore, "Сохраняет события")
 Rel(commandHandler, snapshotStore, "Сохраняет снимки")

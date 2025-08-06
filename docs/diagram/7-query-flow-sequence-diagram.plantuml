@@ -10,7 +10,7 @@ User -> QueryController: Отправка запроса чтения
 QueryController -> QueryGateway: Передача запроса
 QueryGateway -> QueryHandler: Обработка запроса
 
-alt
+alt Запрос на чтение проекции баланса пользователя
     QueryHandler <-> AccountSummaryStore: Чтение баланса
 else
     QueryHandler <-> TransactionHistoryStore: Чтение истории транзакций
