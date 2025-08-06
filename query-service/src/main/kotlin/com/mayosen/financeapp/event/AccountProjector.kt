@@ -1,0 +1,143 @@
+package com.mayosen.financeapp.event
+
+import com.mayosen.financeapp.readmodel.accountsummary.AccountSummary
+import com.mayosen.financeapp.readmodel.accountsummary.AccountSummaryStore
+import com.mayosen.financeapp.readmodel.transactionhistory.Transaction
+import com.mayosen.financeapp.readmodel.transactionhistory.TransactionHistoryStore
+import com.mayosen.financeapp.readmodel.transactionhistory.TransactionType
+import com.mayosen.financeapp.util.IdGenerator
+import org.springframework.stereotype.Service
+import java.math.BigDecimal
+
+// TODO: Здесь и в других местах групповые изменения выполнять в транзакции. TransactionTemplate, например
+
+/**
+ * Обновляет Read Model на основе событий.
+ */
+@Service
+class AccountProjector(
+    private val accountSummaryStore: AccountSummaryStore,
+    private val transactionHistoryStore: TransactionHistoryStore,
+) {
+    fun project(event: Event) {
+        // TODO: Check if event is already applied in read model. Do not process it twice.
+        when (event) {
+            is AccountCreatedEvent -> applyAccountCreated(event)
+            is DepositPerformedEvent -> applyDepositPerformed(event)
+            is WithdrawalPerformedEvent -> applyWithdrawalPerformed(event)
+            is TransferPerformedEvent -> applyTransferPerformed(event)
+            else -> error("Unhandled event type: ${event::class.simpleName}")
+        }
+    }
+
+    private fun applyAccountCreated(event: AccountCreatedEvent) {
+        val summary =
+            AccountSummary(
+                accountId = event.aggregateId,
+                balance = BigDecimal.ZERO,
+                ownerId = event.ownerId,
+                updatedAt = event.timestamp,
+            )
+        accountSummaryStore.save(summary)
+    }
+
+    private fun applyDepositPerformed(event: DepositPerformedEvent) {
+        val summary =
+            accountSummaryStore.findByAccountId(event.aggregateId)
+                ?: throw IllegalStateException("Account not found: ${event.aggregateId}")
+        val updated =
+            summary.copy(
+                balance = summary.balance + event.amount,
+                updatedAt = event.timestamp,
+            )
+        accountSummaryStore.save(updated)
+        val transaction = event.toTransaction()
+        transactionHistoryStore.save(transaction)
+    }
+
+    private fun applyWithdrawalPerformed(event: WithdrawalPerformedEvent) {
+        val summary =
+            accountSummaryStore.findByAccountId(event.aggregateId)
+                ?: throw IllegalStateException("Account not found: ${event.aggregateId}")
+        val updated =
+            summary.copy(
+                balance = summary.balance - event.amount,
+                updatedAt = event.timestamp,
+            )
+        accountSummaryStore.save(updated)
+        val transaction = event.toTransaction()
+        transactionHistoryStore.save(transaction)
+    }
+
+    private fun applyTransferPerformed(event: TransferPerformedEvent) {
+        val source =
+            accountSummaryStore.findByAccountId(event.aggregateId)
+                ?: throw IllegalStateException("Source account not found: ${event.aggregateId}")
+        val destination =
+            accountSummaryStore.findByAccountId(event.toAggregateId)
+                ?: throw IllegalStateException("Destination account not found: ${event.aggregateId}")
+
+        val updatedSource =
+            source.copy(
+                balance = source.balance - event.amount,
+                updatedAt = event.timestamp,
+            )
+        val updatedDestination =
+            destination.copy(
+                balance = destination.balance + event.amount,
+                updatedAt = event.timestamp,
+            )
+
+        accountSummaryStore.saveAll(listOf(updatedSource, updatedDestination))
+
+        val sourceTransaction = event.toSourceTransaction()
+        val destinationTransaction = event.toDestinationTransaction()
+        transactionHistoryStore.saveAll(listOf(sourceTransaction, destinationTransaction))
+    }
+
+    private fun DepositPerformedEvent.toTransaction(): Transaction =
+        Transaction(
+            accountId = aggregateId,
+            sourceEventId = eventId,
+            transactionId = IdGenerator.generateTransactionId(),
+            type = TransactionType.DEPOSIT,
+            amount = amount,
+            timestamp = timestamp,
+            relatedAccountId = null,
+        )
+
+    private fun WithdrawalPerformedEvent.toTransaction(): Transaction =
+        Transaction(
+            accountId = aggregateId,
+            sourceEventId = eventId,
+            transactionId = IdGenerator.generateTransactionId(),
+            type = TransactionType.WITHDRAWAL,
+            amount = amount,
+            timestamp = timestamp,
+            relatedAccountId = null,
+        )
+
+    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+    private fun TransferPerformedEvent.toSourceTransaction(): Transaction =
+        Transaction(
+            accountId = aggregateId,
+            sourceEventId = eventId,
+            transactionId = IdGenerator.generateTransactionId(),
+            type = TransactionType.TRANSFER_OUT,
+            amount = amount,
+            timestamp = timestamp,
+            relatedAccountId = aggregateId!!,
+        )
+
+    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+    private fun TransferPerformedEvent.toDestinationTransaction(): Transaction =
+        Transaction(
+            accountId = aggregateId,
+            sourceEventId = eventId,
+            transactionId = IdGenerator.generateTransactionId(),
+            type = TransactionType.TRANSFER_IN,
+            amount = this.amount,
+            timestamp = this.timestamp,
+            relatedAccountId = toAggregateId!!,
+        )
+}

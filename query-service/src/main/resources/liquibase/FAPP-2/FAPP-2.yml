@@ -1,0 +1,89 @@
+databaseChangeLog:
+  - changeSet:
+      id: FAPP-2-create-table_account_summary
+      author: mayosen
+      changes:
+        - createTable:
+            tableName: account_summary
+            columns:
+              - column:
+                  name: account_id
+                  type: varchar(100)
+                  remarks: "Идентификатор счета"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: owner_id
+                  type: varchar(100)
+                  remarks: "Идентификатор владельца счета"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: balance
+                  type: numeric(12, 2)
+                  remarks: "Баланс счета"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  remarks: "Время последнего обновления"
+                  # defaultValueComputed: "timezone('utc', now())"
+                  defaultValueComputed: "CURRENT_TIMESTAMP()"
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: FAPP-2-create-table_transaction_view
+      author: mayosen
+      changes:
+        - createTable:
+            tableName: transaction_view
+            columns:
+              - column:
+                  name: transaction_id
+                  type: varchar(100)
+                  remarks: "Идентификатор транзакции"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: account_id
+                  type: varchar(100)
+                  remarks: "Идентификатор счета"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: source_event_id
+                  type: varchar(100)
+                  remarks: "Идентификатор события, вызвавшего транзакцию"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(100)
+                  remarks: "Тип транзакции"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: numeric(12, 2)
+                  remarks: "Размер транзакции"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: timestamp
+                  type: timestamp
+                  remarks: "Время транзакции"
+                  # defaultValueComputed: "timezone('utc', now())"
+                  defaultValueComputed: "CURRENT_TIMESTAMP()"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: related_account_id
+                  type: varchar(100)
+                  remarks: "Идентификатор связанного счета. Используется для переводов"
+        - addUniqueConstraint:
+            tableName: transaction_view
+            columnNames: source_event_id, type
+            constraintName: unique-event_id-type

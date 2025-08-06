@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: FAPP-1/FAPP-1.yml
+      relativeToChangelogFile: true

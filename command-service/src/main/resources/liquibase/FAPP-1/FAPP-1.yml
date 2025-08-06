@@ -1,0 +1,79 @@
+databaseChangeLog:
+  - changeSet:
+      id: FAPP-1-create-table_event
+      author: mayosen
+      changes:
+        - createTable:
+            tableName: event
+            columns:
+              - column:
+                  name: event_id
+                  type: varchar(100)
+                  remarks: "Идентификатор события"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: sequence_number
+                  type: bigint
+                  remarks: "Порядковый номер события"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: aggregate_id
+                  type: varchar(100)
+                  remarks: "Идентификатор агрегата"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: event_type
+                  type: varchar(300)
+                  remarks: "Тип события, полное квалифицированное имя класса (FCQN)"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: event_fields
+                  type: text
+                  remarks: "Поля, специфичные для события"
+              - column:
+                  name: timestamp
+                  type: timestamp
+                  remarks: "Время события"
+                  # defaultValueComputed: "timezone('utc', now())"
+                  defaultValueComputed: "CURRENT_TIMESTAMP()"
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: FAPP-1-create-table_snapshot
+      author: mayosen
+      changes:
+        - createTable:
+            tableName: snapshot
+            columns:
+              - column:
+                  name: aggregate_id
+                  type: varchar(100)
+                  remarks: "Идентификатор агрегата"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: balance
+                  type: numeric(12, 2)
+                  remarks: "Баланс агрегата"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_sequence_number
+                  type: bigint
+                  remarks: "Порядковый номер события, на момент которого сделан снимок"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: timestamp
+                  type: timestamp
+                  remarks: "Время события"
+                  # defaultValueComputed: "timezone('utc', now())"
+                  defaultValueComputed: "CURRENT_TIMESTAMP()"
+                  constraints:
+                    nullable: false
