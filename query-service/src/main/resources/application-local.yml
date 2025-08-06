@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./.local/databases/query-db
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  h2:
+    console:
+      enabled: true
+  kafka:
+    bootstrap-servers: http://localhost:9092
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.mayosen.financeapp: TRACE
+    org.springframework.jdbc.core.JdbcTemplate: DEBUG
+    org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate: DEBUG
+    org.springframework.data.jdbc.core.JdbcAggregateTemplate: DEBUG
+    org.apache.kafka: WARN

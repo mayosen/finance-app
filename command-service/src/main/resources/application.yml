@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: command-service
+  liquibase:
+    enabled: true
+    change-log: classpath:liquibase/changelog-master.yml
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+    # TODO: Не работает. Видимо это только для админки
+    # admin:
+    #   close-timeout: 5s
+    # template:
+    #   observation-enabled: true
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+app:
+  kafka:
+    events:
+      topic: financeapp-events
+  snapshot:
+    strategy:
+      every-times: 5

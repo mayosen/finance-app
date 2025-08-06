@@ -1,0 +1,29 @@
+server:
+  port: 8180
+
+spring:
+  application:
+    name: query-service
+  liquibase:
+    enabled: true
+    change-log: classpath:liquibase/changelog-master.yml
+  kafka:
+    consumer:
+      group-id: query-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: false
+    listener:
+      ack-mode: manual_immediate
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+app:
+  kafka:
+    events:
+      topic: financeapp-events
