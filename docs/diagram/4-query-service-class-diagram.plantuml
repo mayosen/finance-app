@@ -1,0 +1,19 @@
+@startuml
+package "Query Service" {
+    class QueryController
+    interface QueryGateway
+    class QueryHandler
+    interface AccountSummaryStore
+    interface TransactionHistoryStore
+    interface EventSubscriber
+    interface AccountProjector
+
+    QueryController ..> QueryGateway
+    QueryGateway ..> QueryHandler
+    QueryHandler ..> AccountSummaryStore
+    QueryHandler ..> TransactionHistoryStore
+    EventSubscriber ..> AccountProjector
+    AccountProjector ..> AccountSummaryStore
+    AccountProjector ..> TransactionHistoryStore
+}
+@enduml

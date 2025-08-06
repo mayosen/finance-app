@@ -1,0 +1,52 @@
+@startuml
+skinparam linetype ortho
+left to right direction
+
+node "Docker Host" as host {
+  node "Command Service Container" as commandServiceContainer {
+    artifact "command-service.jar" as commandServiceJar
+  }
+
+  node "Query Service Container" as queryServiceContainer {
+    artifact "query-service.jar" as queryServiceJar
+  }
+
+  node "Kafka Broker Container" as kafka {
+    component "Kafka Broker" as kafkaComponent
+  }
+
+  node "Zookeeper Container" as zk {
+    component "Zookeeper" as zookepComponent
+  }
+
+  node "PostgreSQL Read Model" as readModelDb {
+    component "Read Model Database" as readModelDbComponent
+  }
+
+  node "PostgreSQL Event" as eventDb {
+    component "Event Database" as eventDbComponent
+  }
+}
+
+node "Client Device" as client {
+  artifact "User Application" as userApp
+}
+
+' 1. Коммуникация пользователей с сервисами
+client --> commandServiceContainer      : HTTP
+client --> queryServiceContainer      : HTTP
+
+' 2. Событийный поток через Kafka
+commandServiceContainer --> kafkaComponent   : Публикует событий
+kafkaComponent <-- queryServiceContainer   : Читает события
+kafkaComponent <-- zookepComponent   : Координирует
+
+' 3. Запуск артефактов
+commandServiceContainer --> commandServiceJar
+queryServiceContainer --> queryServiceJar
+
+' 4. СУБД
+commandServiceContainer --> readModelDbComponent       : JDBC
+queryServiceContainer --> eventDbComponent       : JDBC
+
+@enduml

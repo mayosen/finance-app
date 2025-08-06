@@ -1,0 +1,36 @@
+@startuml C4_Component
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_LEFT_RIGHT()
+skinparam ranksep 10
+
+Person(user, "Пользователь", "Использует приложение\nдля управления счётами\nи транзакциями")
+
+System_Boundary(financeSystem, "Финансовое приложение") {
+    System_Boundary(queryService, "Query Service") {
+        Component(queryController, "QueryController", "Kotlin, Spring Boot", "REST-контроллер\тдля чтения данных")
+        Component(queryGateway, "SyncQueryGateway", "Kotlin, Spring Boot", "Фасад для\nобработки запросов")
+        Component(queryHandler, "QueryHandler", "Kotlin, Spring Boot", "Логика обработки\nзапросов")
+        Component(accountSummaryStore, "JdbcAccountSummaryStore", "Spring Data JDBC", "Хранение проекций счёта")
+        Component(transactionHistoryStore, "JdbcTransactionHistoryStore", "Spring Data JDBC", "Хранение истории транзакций")
+        Component(eventSubscriber, "KafkaEventSubscriber", "Spring Kafka", "Подписка на события из шины")
+        Component(accountProjector, "AccountProjector", "Kotlin, Spring Boot", "Обновление проекций")
+        Component(serviceEventProcessor, "ServiceEventProcessor", "Kotlin, Spring Boot", "Обработка служебных событий")
+    }
+    ContainerDb(readModelDb, "Read Model DB", "PostgreSQL", "Хранит проекции\nсчёта и истории\nтранзакций")
+    Container(eventBus, "Event Bus", "Apache Kafka", "Шина событий")
+}
+
+Rel(user, queryController, "Отправляет\nзапросы")
+Rel(queryController, queryGateway, "Вызывает фасад")
+Rel(queryGateway, queryHandler, "Передаёт запросы")
+Rel(queryHandler, accountSummaryStore, "Читает проекцию счёта")
+Rel(queryHandler, transactionHistoryStore, "Читает историю транзакций")
+Rel(eventSubscriber, eventBus, "Слушает события")
+Rel(eventSubscriber, accountProjector, "Публикует события в проектор")
+Rel(eventSubscriber, serviceEventProcessor, "Публикует события в обработчик")
+Rel(accountProjector, accountSummaryStore, "Обновляет проекции")
+Rel(accountProjector, transactionHistoryStore, "Обновляет проекции")
+Rel(accountSummaryStore, readModelDb, "Использует")
+Rel(transactionHistoryStore, readModelDb, "Использует")
+@enduml

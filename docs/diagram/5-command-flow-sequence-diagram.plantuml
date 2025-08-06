@@ -1,0 +1,32 @@
+@startuml
+actor User as "Пользователь"
+participant CommandController as "CommandController"
+participant CommandGateway as "CommandGateway"
+participant CommandHandler as "CommandHandler"
+participant AccountAggregate as "AccountAggregate"
+participant EventStore as "EventStore"
+participant SnapshotStore as "SnapshotStore"
+participant EventPublisher as "EventPublisher"
+participant EventBus as "Event Bus"
+
+User -> CommandController: Отправка команды
+CommandController -> CommandGateway: Передача команды
+CommandGateway -> CommandHandler: Обработка команды
+CommandHandler <-> SnapshotStore: Запрос снимка состояния системы
+
+alt снимок существует
+    CommandHandler <-> EventStore: Восстановление состояние системы из снимка
+else снимок не существует
+    CommandHandler <-> EventStore: Восстановление состояние системы\nпутем воспроизведение всех событий
+end
+
+CommandHandler <-> AccountAggregate: Применение команды
+CommandHandler -> EventStore: Сохранение события
+
+opt сохранить снимок
+    CommandHandler -> SnapshotStore: Сохранение снимка состояния системы
+end
+
+CommandHandler -> EventPublisher: Публикация события
+EventPublisher -> EventBus: Доставка события
+@enduml

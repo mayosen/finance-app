@@ -1,49 +1,49 @@
 # finance-app
 
-## Generate API
+Цель данного проекта - исследование практического применения архитектурных шаблонов Event Sourcing и CQRS на примере
+финансового приложения для учета расходов. Система представляет собой 2 микросервиса, сервис команд и сервис запросов,
+взаимодействующих через шину событий. Выбранная архитектура позволяет разделить поток команд и поток запросов,
+обеспечить
+оптимизированный доступ к данным через проекции, а также поддерживать неизменяемый журнал событий.
 
-To generate API by OpenAPI specification turn on the appropriate Maven profile:
+## Архитектура
 
-- generate-command-service-api
-- generate-query-service-api
+Диаграмма контекста (C4 context diagram)
 
-Finally, do not forget to apply "Reformat Code" and "Optimize Imports" actions.
+![Диаграмма контекста](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/1-c4-context-diagram.plantuml)
 
-## Run locally
+Диаграмма прецедентов (Use case diagram)
 
-The application can be run locally. To do this, it is suggested to run it with an active `local` profile.
+![Диаграмма прецедентов](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/2-use-case-diagram.plantuml)
 
-```shell
-SPRING_PROFILES_ACTIVE=local
-```
+Диаграмма последовательностей для потока команд
 
-Also, third-party systems are needed to run, for this it is proposed to use Docker Compose.
+![Диаграмма последовательностей для потока команд](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/5-command-flow-sequence-diagram.plantuml)
 
-Create and launch the project in detached mode
+Диаграмма последовательностей для потока проекции событий
 
-```shell
-# root dir
-$ cd docker
-```
+![Диаграмма последовательностей для потока проекции событий](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/6-event-flow-sequence-diagram.plantuml)
 
-```shell
-docker compose -p finance-app -f docker-compose.yml up -d
-```
+Диаграмма последовательностей для потока запросов
 
-Listen to logs
+![Диаграмма последовательностей для потока запросов](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/7-query-flow-sequence-diagram.plantuml)
 
-```shell
-docker compose -p finance-app -f docker-compose.yml logs -f 
-```
+Диаграмма компонентов сервиса команд (C4 Component diagram)
 
-Stop the project
+![Диаграмма компонентов сервиса команд](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/8-command-service-c4-component-diagram.plantuml)
 
-```shell
-docker compose -p finance-app -f docker-compose.yml stop
-```
+Диаграмма компонентов сервиса запросов (C4 Component diagram)
 
-Completely delete the project
+![Диаграмма компонентов сервиса запросов](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/9-query-service-c4-component-diagram.plantuml)
 
-```shell
-docker-compose -p finance-app -f docker-compose.yml down --volumes --remove-orphan
-```
+Диаграмма развертывания (Deployment diagram)
+
+![Диаграмма развертывания](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/10-deployment-diagram.plantuml)
+
+## Технологии
+
+TODO
+
+## Разработка
+
+Инструкции для разработки приложены в файле [DEVELOPMENT.md](DEVELOPMENT.md).
