@@ -9,13 +9,14 @@ import com.mayosen.financeapp.query.api.GetTransactionHistoryResponse
 import com.mayosen.financeapp.query.api.ListAccountsQuery
 import com.mayosen.financeapp.query.api.ListAccountsResponse
 import com.mayosen.financeapp.query.api.QueryGateway
-import com.mayosen.financeapp.query.api.v1.GetAccountSummaryResponse as GetAccountSummaryApiResponse
-import com.mayosen.financeapp.query.api.v1.GetTransactionHistoryResponse as GetTransactionHistoryApiResponse
-import com.mayosen.financeapp.query.api.v1.ListAccountsResponse as ListAccountsApiResponse
 import com.mayosen.financeapp.query.api.v1.QueryApi
+import com.mayosen.financeapp.query.mapper.toResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import java.time.Instant
+import com.mayosen.financeapp.query.api.v1.GetAccountSummaryResponse as GetAccountSummaryApiResponse
+import com.mayosen.financeapp.query.api.v1.GetTransactionHistoryResponse as GetTransactionHistoryApiResponse
+import com.mayosen.financeapp.query.api.v1.ListAccountsResponse as ListAccountsApiResponse
 
 @RestController
 class QueryController(
@@ -23,96 +24,37 @@ class QueryController(
 ) : QueryApi {
     override fun listAccounts(ownerId: String): ResponseEntity<ListAccountsApiResponse> {
         val query = ListAccountsQuery(ownerId)
-        val queryResponse: ListAccountsResponse = queryGateway.query(query)
-        val apiResponse = queryResponse.toApiResponse()
-        return ResponseEntity.ok(apiResponse)
+        val result: ListAccountsResponse = queryGateway.query(query)
+        return ResponseEntity.ok(result.toResponse())
     }
 
-    fun ListAccountsResponse.toApiResponse(): ListAccountsApiResponse {
-        val accounts =
-            accounts.map {
-                ListAccountsApiResponse.Account(
-                    accountId = it.accountId,
-                    balance = it.balance,
-                    updatedAt = it.updatedAt,
-                )
-            }
-        return ListAccountsApiResponse(accounts)
-    }
-
-    override fun getAccount(accountId: String): ResponseEntity<GetAccountSummaryApiResponse> {
+    override fun getAccountSummary(accountId: String): ResponseEntity<GetAccountSummaryApiResponse> {
         val query = GetAccountSummaryQuery(accountId)
-        val queryResponse: GetAccountSummaryResponse = queryGateway.query(query)
-        val apiResponse = queryResponse.toApiResponse()
-        return ResponseEntity.ok(apiResponse)
+        val result: GetAccountSummaryResponse = queryGateway.query(query)
+        return ResponseEntity.ok(result.toResponse())
     }
-
-    private fun GetAccountSummaryResponse.toApiResponse() =
-        GetAccountSummaryApiResponse(
-            accountId = accountId,
-            balance = balance,
-            ownerId = ownerId,
-            updatedAt = updatedAt,
-        )
 
     override fun getTransactions(
         accountId: String,
         timeFrom: Instant?,
         timeTo: Instant?,
-        pageOffset: Int?,
-        pageLimit: Int?,
+        pageOffset: Int,
+        pageLimit: Int,
     ): ResponseEntity<GetTransactionHistoryApiResponse> {
         val timePeriod: TimePeriod? =
             if (timeFrom != null || timeTo != null) {
-                TimePeriod(
-                    from = timeFrom,
-                    to = timeTo,
-                )
+                TimePeriod(from = timeFrom, to = timeTo)
             } else {
                 null
             }
-        val pagination =
-            Pagination(
-                offset = pageOffset ?: DEFAULT_PAGE_OFFSET,
-                limit = pageLimit ?: DEFAULT_PAGE_LIMIT,
-            )
+        val pagination = Pagination(offset = pageOffset, limit = pageLimit)
         val query =
             GetTransactionHistoryQuery(
                 accountId = accountId,
                 timePeriod = timePeriod,
                 pagination = pagination,
             )
-        val queryResponse: GetTransactionHistoryResponse = queryGateway.query(query)
-        val apiResponse = queryResponse.toApiResponse()
-        return ResponseEntity.ok(apiResponse)
-    }
-
-    private fun GetTransactionHistoryResponse.toApiResponse(): GetTransactionHistoryApiResponse {
-        val transactions = transactions.map { it.toTransaction() }
-        return GetTransactionHistoryApiResponse(
-            transactions = transactions,
-            pagination = pagination.toPagination(),
-        )
-    }
-
-    private fun GetTransactionHistoryResponse.Transaction.toTransaction(): GetTransactionHistoryApiResponse.Transaction =
-        GetTransactionHistoryApiResponse.Transaction(
-            transactionId = transactionId,
-            // TODO: Map explicitly
-            type = GetTransactionHistoryApiResponse.TransactionType.valueOf(type.name),
-            amount = amount,
-            timestamp = timestamp,
-            relatedAccountId = relatedAccountId,
-        )
-
-    private fun GetTransactionHistoryResponse.Pagination.toPagination() =
-        GetTransactionHistoryApiResponse.Pagination(
-            hasMore = hasMore,
-            total = total,
-        )
-
-    private companion object {
-        const val DEFAULT_PAGE_OFFSET = 0
-        const val DEFAULT_PAGE_LIMIT = 20
+        val result: GetTransactionHistoryResponse = queryGateway.query(query)
+        return ResponseEntity.ok(result.toResponse())
     }
 }

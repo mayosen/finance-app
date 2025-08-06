@@ -8,12 +8,10 @@ import org.springframework.data.relational.core.mapping.Table
 import java.math.BigDecimal
 import java.time.Instant
 
-// TODO: Indexes
-
-@Table("SNAPSHOT")
-class AccountSnapshotEntity(
+@Table("snapshot")
+data class AccountSnapshotEntity(
     @Id
-    val aggregateId: String,
+    val accountId: String,
     val balance: BigDecimal,
     val lastSequenceNumber: Long,
     val timestamp: Instant = Instant.now(),
@@ -23,19 +21,19 @@ class AccountSnapshotEntity(
     @Suppress("unused")
     @PersistenceCreator
     constructor(
-        aggregateId: String,
+        accountId: String,
         balance: BigDecimal,
         lastSequenceNumber: Long,
         timestamp: Instant = Instant.now(),
     ) : this(
-        aggregateId = aggregateId,
+        accountId = accountId,
         balance = balance,
         lastSequenceNumber = lastSequenceNumber,
         timestamp = timestamp,
         isNewEntity = false,
     )
 
-    override fun getId(): String = aggregateId
+    override fun getId(): String = accountId
 
     override fun isNew(): Boolean = isNewEntity
 }

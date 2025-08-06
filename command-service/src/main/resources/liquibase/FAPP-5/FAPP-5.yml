@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: FAPP-5-alter-type-field_event_fields_table_event
+      author: mayosen
+      changes:
+        - sql:
+            sql: ALTER TABLE event ALTER COLUMN event_fields TYPE jsonb USING event_fields::jsonb

@@ -1,15 +1,13 @@
 package com.mayosen.financeapp.event
 
-import com.mayosen.financeapp.readmodel.accountsummary.AccountSummary
-import com.mayosen.financeapp.readmodel.accountsummary.AccountSummaryStore
-import com.mayosen.financeapp.readmodel.transactionhistory.Transaction
-import com.mayosen.financeapp.readmodel.transactionhistory.TransactionHistoryStore
-import com.mayosen.financeapp.readmodel.transactionhistory.TransactionType
-import com.mayosen.financeapp.util.IdGenerator
+import com.mayosen.financeapp.event.mapper.EventToTransactionMapper
+import com.mayosen.financeapp.projection.account.AccountSummary
+import com.mayosen.financeapp.projection.account.AccountSummaryStore
+import com.mayosen.financeapp.projection.transaction.TransactionStore
+import com.mayosen.financeapp.util.transaction.TransactionManager
+import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-
-// TODO: Здесь и в других местах групповые изменения выполнять в транзакции. TransactionTemplate, например
 
 /**
  * Обновляет Read Model на основе событий.
@@ -17,127 +15,116 @@ import java.math.BigDecimal
 @Service
 class AccountProjector(
     private val accountSummaryStore: AccountSummaryStore,
-    private val transactionHistoryStore: TransactionHistoryStore,
+    private val transactionStore: TransactionStore,
+    private val transactionManager: TransactionManager,
+    private val eventToTransactionMapper: EventToTransactionMapper,
+    private val eventDeduplicator: EventDeduplicator,
 ) {
     fun project(event: Event) {
-        // TODO: Check if event is already applied in read model. Do not process it twice.
+        if (eventDeduplicator.hasEventBeenProcessed(event)) {
+            logger.info { "Event '${event.accountId}' has already been processed. Skipping changes" }
+            return
+        }
+
         when (event) {
             is AccountCreatedEvent -> applyAccountCreated(event)
             is DepositPerformedEvent -> applyDepositPerformed(event)
             is WithdrawalPerformedEvent -> applyWithdrawalPerformed(event)
             is TransferPerformedEvent -> applyTransferPerformed(event)
-            else -> error("Unhandled event type: ${event::class.simpleName}")
+            is AccountDeletedEvent -> applyAccountDeleted(event)
+            else -> throw IllegalArgumentException("Unhandled event type: ${event::class.simpleName}")
         }
     }
 
     private fun applyAccountCreated(event: AccountCreatedEvent) {
+        logger.info { "Creating account summary. Event: $event" }
         val summary =
             AccountSummary(
-                accountId = event.aggregateId,
+                accountId = event.accountId,
                 balance = BigDecimal.ZERO,
                 ownerId = event.ownerId,
                 updatedAt = event.timestamp,
+                sourceEventId = event.eventId,
             )
         accountSummaryStore.save(summary)
     }
 
     private fun applyDepositPerformed(event: DepositPerformedEvent) {
+        logger.info { "Updating account summary. Adding transaction. Event: $event" }
         val summary =
-            accountSummaryStore.findByAccountId(event.aggregateId)
-                ?: throw IllegalStateException("Account not found: ${event.aggregateId}")
+            accountSummaryStore.findByAccountId(event.accountId)
+                ?: throw IllegalStateException("Account not found: ${event.accountId}")
         val updated =
             summary.copy(
                 balance = summary.balance + event.amount,
                 updatedAt = event.timestamp,
+                sourceEventId = event.eventId,
             )
-        accountSummaryStore.save(updated)
-        val transaction = event.toTransaction()
-        transactionHistoryStore.save(transaction)
+        val transactions = eventToTransactionMapper.toTransactions(event)
+
+        transactionManager.executeInTransaction {
+            accountSummaryStore.save(updated)
+            transactionStore.saveAll(transactions)
+        }
     }
 
     private fun applyWithdrawalPerformed(event: WithdrawalPerformedEvent) {
+        logger.info { "Updating account summary. Adding transaction. Event: $event" }
         val summary =
-            accountSummaryStore.findByAccountId(event.aggregateId)
-                ?: throw IllegalStateException("Account not found: ${event.aggregateId}")
+            accountSummaryStore.findByAccountId(event.accountId)
+                ?: throw IllegalStateException("Account not found: ${event.accountId}")
         val updated =
             summary.copy(
                 balance = summary.balance - event.amount,
                 updatedAt = event.timestamp,
+                sourceEventId = event.eventId,
             )
-        accountSummaryStore.save(updated)
-        val transaction = event.toTransaction()
-        transactionHistoryStore.save(transaction)
+        val transactions = eventToTransactionMapper.toTransactions(event)
+
+        transactionManager.executeInTransaction {
+            accountSummaryStore.save(updated)
+            transactionStore.saveAll(transactions)
+        }
     }
 
     private fun applyTransferPerformed(event: TransferPerformedEvent) {
+        logger.info { "Updating accounts summary. Adding transactions to accounts. Event: $event" }
         val source =
-            accountSummaryStore.findByAccountId(event.aggregateId)
-                ?: throw IllegalStateException("Source account not found: ${event.aggregateId}")
+            accountSummaryStore.findByAccountId(event.accountId)
+                ?: throw IllegalStateException("Source account not found: ${event.accountId}")
         val destination =
-            accountSummaryStore.findByAccountId(event.toAggregateId)
-                ?: throw IllegalStateException("Destination account not found: ${event.aggregateId}")
+            accountSummaryStore.findByAccountId(event.toAccountId)
+                ?: throw IllegalStateException("Destination account not found: ${event.accountId}")
 
         val updatedSource =
             source.copy(
                 balance = source.balance - event.amount,
                 updatedAt = event.timestamp,
+                sourceEventId = event.eventId,
             )
         val updatedDestination =
             destination.copy(
                 balance = destination.balance + event.amount,
                 updatedAt = event.timestamp,
+                sourceEventId = event.eventId,
             )
 
-        accountSummaryStore.saveAll(listOf(updatedSource, updatedDestination))
+        val transactions = eventToTransactionMapper.toTransactions(event)
 
-        val sourceTransaction = event.toSourceTransaction()
-        val destinationTransaction = event.toDestinationTransaction()
-        transactionHistoryStore.saveAll(listOf(sourceTransaction, destinationTransaction))
+        transactionManager.executeInTransaction {
+            accountSummaryStore.saveAll(listOf(updatedSource, updatedDestination))
+            transactionStore.saveAll(transactions)
+        }
     }
 
-    private fun DepositPerformedEvent.toTransaction(): Transaction =
-        Transaction(
-            accountId = aggregateId,
-            sourceEventId = eventId,
-            transactionId = IdGenerator.generateTransactionId(),
-            type = TransactionType.DEPOSIT,
-            amount = amount,
-            timestamp = timestamp,
-            relatedAccountId = null,
-        )
+    private fun applyAccountDeleted(event: AccountDeletedEvent) {
+        logger.info { "Deleting account summary, deleting transactions. Event: $event" }
 
-    private fun WithdrawalPerformedEvent.toTransaction(): Transaction =
-        Transaction(
-            accountId = aggregateId,
-            sourceEventId = eventId,
-            transactionId = IdGenerator.generateTransactionId(),
-            type = TransactionType.WITHDRAWAL,
-            amount = amount,
-            timestamp = timestamp,
-            relatedAccountId = null,
-        )
+        transactionManager.executeInTransaction {
+            accountSummaryStore.deleteByAccountId(event.accountId)
+            transactionStore.deleteAllByAccountId(event.accountId)
+        }
+    }
 
-    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-    private fun TransferPerformedEvent.toSourceTransaction(): Transaction =
-        Transaction(
-            accountId = aggregateId,
-            sourceEventId = eventId,
-            transactionId = IdGenerator.generateTransactionId(),
-            type = TransactionType.TRANSFER_OUT,
-            amount = amount,
-            timestamp = timestamp,
-            relatedAccountId = aggregateId!!,
-        )
-
-    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-    private fun TransferPerformedEvent.toDestinationTransaction(): Transaction =
-        Transaction(
-            accountId = aggregateId,
-            sourceEventId = eventId,
-            transactionId = IdGenerator.generateTransactionId(),
-            type = TransactionType.TRANSFER_IN,
-            amount = this.amount,
-            timestamp = this.timestamp,
-            relatedAccountId = toAggregateId!!,
-        )
+    private companion object : Logging
 }

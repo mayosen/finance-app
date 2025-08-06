@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: query-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
   liquibase:
     enabled: true
     change-log: classpath:liquibase/changelog-master.yml
@@ -11,8 +13,6 @@ spring:
     consumer:
       group-id: query-service
       auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       enable-auto-commit: false
     listener:
       ack-mode: manual_immediate
@@ -27,3 +27,11 @@ app:
   kafka:
     events:
       topic: financeapp-events
+
+logbook:
+  format:
+    style: curl
+
+logging:
+  level:
+    org.zalando: TRACE

@@ -2,3 +2,12 @@ databaseChangeLog:
   - include:
       file: FAPP-2/FAPP-2.yml
       relativeToChangelogFile: true
+  - include:
+      file: FAPP-4/FAPP-4.yml
+      relativeToChangelogFile: true
+  - include:
+      file: FAPP-6/FAPP-6.yml
+      relativeToChangelogFile: true
+  - include:
+      file: FAPP-7/FAPP-7.yml
+      relativeToChangelogFile: true

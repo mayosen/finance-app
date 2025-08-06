@@ -20,9 +20,9 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: aggregate_id
+                  name: account_id
                   type: varchar(100)
-                  remarks: "Идентификатор агрегата"
+                  remarks: "Идентификатор счета"
                   constraints:
                     nullable: false
               - column:
@@ -51,9 +51,9 @@ databaseChangeLog:
             tableName: snapshot
             columns:
               - column:
-                  name: aggregate_id
+                  name: account_id
                   type: varchar(100)
-                  remarks: "Идентификатор агрегата"
+                  remarks: "Идентификатор счета"
                   constraints:
                     primaryKey: true
                     nullable: false

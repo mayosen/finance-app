@@ -2,3 +2,9 @@ databaseChangeLog:
   - include:
       file: FAPP-1/FAPP-1.yml
       relativeToChangelogFile: true
+  - include:
+      file: FAPP-3/FAPP-3.yml
+      relativeToChangelogFile: true
+  - include:
+      file: FAPP-5/FAPP-5.yml
+      relativeToChangelogFile: true

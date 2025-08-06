@@ -1,16 +1,23 @@
 package com.mayosen.financeapp.event
 
+import com.mayosen.financeapp.event.serialization.EventType
+
 /**
  * Хранилище событий
  */
 interface EventStore {
-    fun countByAggregateId(aggregateId: String): Int
+    fun countByAccountId(accountId: String): Int
 
-    fun findAllByAggregateId(aggregateId: String): List<Event>
+    fun findAllByAccountId(accountId: String): List<Event>
 
-    fun findAllByAggregateIdAfterSequenceNumber(
-        aggregateId: String,
+    fun findAllByAccountIdAfterSequenceNumber(
+        accountId: String,
         sequenceNumber: Long,
+    ): List<Event>
+
+    fun findAllByAccountIdAndTypeIn(
+        accountId: String,
+        types: List<EventType>,
     ): List<Event>
 
     fun save(event: Event)

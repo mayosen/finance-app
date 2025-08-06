@@ -1,6 +1,8 @@
 spring:
   application:
     name: command-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
   liquibase:
     enabled: true
     change-log: classpath:liquibase/changelog-master.yml
@@ -8,12 +10,6 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
-
-    # TODO: Не работает. Видимо это только для админки
-    # admin:
-    #   close-timeout: 5s
-    # template:
-    #   observation-enabled: true
 
 springdoc:
   api-docs:
@@ -28,3 +24,11 @@ app:
   snapshot:
     strategy:
       every-times: 5
+
+logbook:
+  format:
+    style: curl
+
+logging:
+  level:
+    org.zalando: TRACE

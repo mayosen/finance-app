@@ -7,16 +7,14 @@ import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
-// TODO: Indexes
-
-@Table("EVENT")
-class EventEntity(
+@Table("event")
+data class EventEntity(
     @Id
     val eventId: String,
     val sequenceNumber: Long,
-    val aggregateId: String,
+    val accountId: String,
     val eventType: String,
-    val eventFields: String,
+    val eventFields: EventFields,
     val timestamp: Instant,
     @Transient
     val isNewEntity: Boolean,
@@ -26,14 +24,14 @@ class EventEntity(
     constructor(
         eventId: String,
         sequenceNumber: Long,
-        aggregateId: String,
+        accountId: String,
         eventType: String,
-        eventFields: String,
+        eventFields: EventFields,
         timestamp: Instant,
     ) : this(
         eventId = eventId,
         sequenceNumber = sequenceNumber,
-        aggregateId = aggregateId,
+        accountId = accountId,
         eventType = eventType,
         eventFields = eventFields,
         timestamp = timestamp,

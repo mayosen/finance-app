@@ -1,0 +1,180 @@
+openapi: 3.0.1
+info:
+  title: Command API
+  description: API for account operations
+  version: 1.0.0
+tags:
+  - name: command
+    description: Command API
+paths:
+  /command-api/v1/accounts:
+    post:
+      tags:
+        - command
+      summary: Create a new account
+      operationId: createAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountRequest'
+      responses:
+        '200':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+    delete:
+      tags:
+        - command
+      summary: Delete an existing account
+      operationId: deleteAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAccountRequest'
+      responses:
+        '200':
+          description: Account deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+
+  /command-api/v1/deposit:
+    post:
+      tags:
+        - command
+      summary: Deposit money to account
+      operationId: deposit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepositRequest'
+      responses:
+        '200':
+          description: Deposit completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+
+  /command-api/v1/withdraw:
+    post:
+      tags:
+        - command
+      summary: Withdraw money from account
+      operationId: withdraw
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WithdrawRequest'
+      responses:
+        '200':
+          description: Withdrawal completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+
+  /command-api/v1/transfer:
+    post:
+      tags:
+        - command
+      summary: Transfer money between accounts
+      operationId: transfer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequest'
+      responses:
+        '200':
+          description: Transfer completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+
+components:
+  schemas:
+    CreateAccountRequest:
+      type: object
+      properties:
+        ownerId:
+          type: string
+          example: "user123"
+      required:
+        - ownerId
+
+    DepositRequest:
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: "e1be0f53-007a-4d58-805b-2c5a64fd3ff4"
+        amount:
+          $ref: '#/components/schemas/DecimalAmount'
+      required:
+        - accountId
+        - amount
+
+    WithdrawRequest:
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: "e1be0f53-007a-4d58-805b-2c5a64fd3ff4"
+        amount:
+          $ref: '#/components/schemas/DecimalAmount'
+      required:
+        - accountId
+        - amount
+
+    TransferRequest:
+      type: object
+      properties:
+        fromAccountId:
+          type: string
+          example: "e1be0f53-007a-4d58-805b-2c5a64fd3ff4"
+        toAccountId:
+          type: string
+          example: "e1be0f53-007a-4d58-805b-2c5a64fd3ff4"
+        amount:
+          $ref: '#/components/schemas/DecimalAmount'
+      required:
+        - fromAccountId
+        - toAccountId
+        - amount
+
+    DeleteAccountRequest:
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: "e1be0f53-007a-4d58-805b-2c5a64fd3ff4"
+      required:
+        - accountId
+
+    CommandResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "e1be0f53-007a-4d58-805b-2c5a64fd3ff4"
+      required:
+        - id
+
+    DecimalAmount:
+      type: string
+      format: decimal
+      example: "50.00"

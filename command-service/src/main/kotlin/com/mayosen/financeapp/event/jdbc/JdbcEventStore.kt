@@ -2,33 +2,46 @@ package com.mayosen.financeapp.event.jdbc
 
 import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.event.EventStore
+import com.mayosen.financeapp.event.jdbc.serialization.EventEntityDeserializer
+import com.mayosen.financeapp.event.jdbc.serialization.EventEntitySerializer
+import com.mayosen.financeapp.event.serialization.EventType
+import com.mayosen.financeapp.event.serialization.typeName
 import org.springframework.stereotype.Service
 
 @Service
 class JdbcEventStore(
     private val eventEntityRepository: EventEntityRepository,
-    private val eventSerializer: EventSerializer,
-    private val eventDeserializer: EventDeserializer,
+    private val eventSerializer: EventEntitySerializer,
+    private val eventDeserializer: EventEntityDeserializer,
 ) : EventStore {
-    override fun countByAggregateId(aggregateId: String): Int = eventEntityRepository.countByAggregateId(aggregateId)
+    override fun countByAccountId(accountId: String): Int = eventEntityRepository.countByAccountId(accountId)
 
-    override fun findAllByAggregateId(aggregateId: String): List<Event> {
-        val entities = eventEntityRepository.findAllByAggregateId(aggregateId)
+    override fun findAllByAccountId(accountId: String): List<Event> {
+        val entities = eventEntityRepository.findAllByAccountId(accountId)
         return entities.map { eventDeserializer.deserialize(it) }
     }
 
-    override fun findAllByAggregateIdAfterSequenceNumber(
-        aggregateId: String,
+    override fun findAllByAccountIdAfterSequenceNumber(
+        accountId: String,
         sequenceNumber: Long,
     ): List<Event> {
         val entities =
-            eventEntityRepository.findAllByAggregateIdAndSequenceNumberGreaterThan(aggregateId, sequenceNumber)
+            eventEntityRepository.findAllByAccountIdAndSequenceNumberGreaterThan(accountId, sequenceNumber)
+        return entities.map { eventDeserializer.deserialize(it) }
+    }
+
+    override fun findAllByAccountIdAndTypeIn(
+        accountId: String,
+        types: List<EventType>,
+    ): List<Event> {
+        val eventTypes = types.map { it.typeName() }
+        val entities = eventEntityRepository.findAllByAccountIdAndEventTypeIn(accountId, eventTypes)
         return entities.map { eventDeserializer.deserialize(it) }
     }
 
     override fun save(event: Event) {
         val maxSequenceNumber =
-            eventEntityRepository.findMaxSequenceNumberByAggregateId(event.aggregateId)
+            eventEntityRepository.findMaxSequenceNumberByAccountId(event.accountId)
                 ?: 0
         val entity =
             eventSerializer

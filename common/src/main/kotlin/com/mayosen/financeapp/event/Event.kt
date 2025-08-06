@@ -4,6 +4,6 @@ import java.time.Instant
 
 interface Event {
     val eventId: String
-    val aggregateId: String
+    val accountId: String
     val timestamp: Instant
 }

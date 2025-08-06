@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: FAPP-6-add-column_source_event_id_table_account_summary
+      author: mayosen
+      changes:
+        - addColumn:
+            tableName: account_summary
+            columns:
+              - column:
+                  name: source_event_id
+                  type: varchar(100)
+                  remarks: "Идентификатор события, вызвавшего транзакцию"
+        - sql:
+            sql: UPDATE account_summary SET source_event_id = 'unknown' WHERE account_summary IS NULL
+            comment: "Set value for all existing records"
+        - addNotNullConstraint:
+            tableName: account_summary
+            columnName: source_event_id
+            columnDataType: varchar(100)
+            comment: "Now safe to add NOT NULL constraint"

@@ -2,16 +2,20 @@ package com.mayosen.financeapp.command
 
 import com.mayosen.financeapp.aggregate.AccountAggregate
 import com.mayosen.financeapp.command.api.CreateAccountCommand
+import com.mayosen.financeapp.command.api.DeleteAccountCommand
 import com.mayosen.financeapp.command.api.DepositCommand
 import com.mayosen.financeapp.command.api.TransferCommand
 import com.mayosen.financeapp.command.api.WithdrawCommand
+import com.mayosen.financeapp.event.AccountCreatedEvent
+import com.mayosen.financeapp.event.AccountDeletedEvent
 import com.mayosen.financeapp.event.Event
 import com.mayosen.financeapp.event.EventPublisher
 import com.mayosen.financeapp.event.EventStore
 import com.mayosen.financeapp.exception.EventProcessingException
 import com.mayosen.financeapp.snapshot.CreateSnapshotStrategy
 import com.mayosen.financeapp.snapshot.SnapshotStore
-import com.mayosen.financeapp.util.IdGenerator.generateAccountId
+import com.mayosen.financeapp.util.identifier.IdGenerator
+import com.mayosen.financeapp.util.transaction.TransactionManager
 import org.apache.logging.log4j.kotlin.Logging
 import org.springframework.stereotype.Service
 
@@ -24,16 +28,18 @@ class CommandHandler(
     private val snapshotStore: SnapshotStore,
     private val eventPublisher: EventPublisher,
     private val createSnapshotStrategy: CreateSnapshotStrategy,
+    private val idGenerator: IdGenerator,
+    private val transactionManager: TransactionManager,
 ) {
     fun handleCreateAccount(command: CreateAccountCommand) {
         logger.info { "Processing CreateAccountCommand: $command" }
 
-        val accountId = generateAccountId()
-        val aggregate = AccountAggregate(accountId)
+        val accountId = idGenerator.generateAccountId()
+        val aggregate = AccountAggregate(accountId, idGenerator)
 
         aggregate.createAccount(command.ownerId)
 
-        persistAndPublish(accountId, aggregate)
+        persistAndPublish(aggregate)
     }
 
     fun handleDeposit(command: DepositCommand) {
@@ -42,7 +48,7 @@ class CommandHandler(
         val aggregate = loadAggregate(command.accountId)
         aggregate.deposit(command.amount)
 
-        persistAndPublish(command.accountId, aggregate)
+        persistAndPublish(aggregate)
     }
 
     fun handleWithdraw(command: WithdrawCommand) {
@@ -51,7 +57,7 @@ class CommandHandler(
         val aggregate = loadAggregate(command.accountId)
         aggregate.withdraw(command.amount)
 
-        persistAndPublish(command.accountId, aggregate)
+        persistAndPublish(aggregate)
     }
 
     fun handleTransfer(command: TransferCommand) {
@@ -60,51 +66,77 @@ class CommandHandler(
         val aggregate = loadAggregate(command.fromAccountId)
         aggregate.transfer(command.toAccountId, command.amount)
 
-        persistAndPublish(command.fromAccountId, aggregate)
+        persistAndPublish(aggregate)
     }
 
     private fun loadAggregate(accountId: String): AccountAggregate {
-        val snapshot = snapshotStore.findByAggregateId(accountId)
-        val aggregate = AccountAggregate(accountId)
+        val snapshot = snapshotStore.findByAccountId(accountId)
+        val aggregate = AccountAggregate(accountId, idGenerator)
         val events: List<Event>
 
         if (snapshot != null) {
             aggregate.loadFromSnapshot(snapshot)
-            events = eventStore.findAllByAggregateIdAfterSequenceNumber(accountId, snapshot.lastSequenceNumber)
+            events = eventStore.findAllByAccountIdAfterSequenceNumber(accountId, snapshot.lastSequenceNumber)
         } else {
-            events = eventStore.findAllByAggregateId(accountId)
+            events = eventStore.findAllByAccountId(accountId)
         }
 
         aggregate.loadFromHistory(events)
         return aggregate
     }
 
-    private fun persistAndPublish(
-        accountId: String,
-        aggregate: AccountAggregate,
-    ) {
+    fun handleDeleteAccount(command: DeleteAccountCommand) {
+        logger.info { "Processing DeleteAccountCommand: $command" }
+
+        val aggregate =
+            AccountAggregate(command.accountId, idGenerator)
+                .apply { created = true }
+
+        if (aggregate.exists()) {
+            aggregate.deleteAccount()
+            persistAndPublish(aggregate)
+            snapshotStore.delete(aggregate)
+        }
+    }
+
+    private fun AccountAggregate.exists(): Boolean {
+        val snapshotExists = snapshotStore.findByAccountId(accountId) != null
+        if (snapshotExists) {
+            return true
+        }
+        val accountEvents =
+            eventStore.findAllByAccountIdAndTypeIn(
+                accountId = accountId,
+                types = listOf(AccountCreatedEvent::class, AccountDeletedEvent::class),
+            )
+        val accountHasBeenCreated = accountEvents.count { it is AccountCreatedEvent } == 1
+        val accountHasNotBeenDeleted = accountEvents.count { it is AccountDeletedEvent } == 0
+        return accountHasBeenCreated && accountHasNotBeenDeleted
+    }
+
+    private fun persistAndPublish(aggregate: AccountAggregate) {
         val newEvents = aggregate.getUncommittedEvents()
         if (newEvents.isEmpty()) {
             logger.debug("Empty events list. Skipping updates")
             return
         }
 
-        // TODO: In transaction
         try {
-            eventStore.saveAll(newEvents)
-            eventPublisher.publishAll(newEvents)
-
-            if (createSnapshotStrategy.shouldCreateSnapshot(accountId)) {
-                snapshotStore.save(aggregate)
+            transactionManager.executeInTransaction {
+                eventStore.saveAll(newEvents)
+                if (createSnapshotStrategy.shouldCreateSnapshot(aggregate)) {
+                    snapshotStore.save(aggregate)
+                }
             }
 
-            logger.info { "Successfully processed events for aggregate $accountId" }
+            eventPublisher.publishAll(newEvents)
+            logger.info { "Successfully processed events for account ${aggregate.accountId}" }
             aggregate.markEventsCommitted()
         } catch (ex: Exception) {
-            logger.error(ex) { "Failed to process events for aggregate $accountId" }
+            logger.error(ex) { "Failed to process events for account ${aggregate.accountId}" }
             throw EventProcessingException("Failed to process events", ex)
         }
     }
 
-    companion object : Logging
+    private companion object : Logging
 }
