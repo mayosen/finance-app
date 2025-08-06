@@ -1,0 +1,9 @@
+{
+  "type": "com.mayosen.financeapp.event.AccountCreatedEvent",
+  "event": {
+    "eventId": "d11b22eb-092a-433b-93fb-ad969e1cfec6",
+    "aggregateId": "75598ea8-b7fc-4941-8871-33998cef494d",
+    "timestamp": 1747425200,
+    "ownerId": "admin"
+  }
+}

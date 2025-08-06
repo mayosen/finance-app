@@ -1,0 +1,24 @@
+@startuml
+
+package "Query Service" {
+    interface AccountSummaryStore {
+        + findByAccountId(accountId: String): AccountSummary?
+        + save(summary: AccountSummary)
+    }
+
+    class JdbcAccountSummaryStore {
+    + findByAccountId(accountId: String): AccountSummary?
+    + save(summary: AccountSummary)
+    }
+
+    interface AccountSummaryEntityRepository
+}
+
+package "Spring Data JDBC" {
+  interface CrudRepository
+}
+
+AccountSummaryStore <|.. JdbcAccountSummaryStore
+JdbcAccountSummaryStore ..> AccountSummaryEntityRepository : использует
+CrudRepository <|.. AccountSummaryEntityRepository
+@enduml

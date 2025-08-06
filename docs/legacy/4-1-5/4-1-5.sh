@@ -1,0 +1,4 @@
+[appuser@0aafc0b6ad51 ~]$ kafka-console-consumer --bootstrap-server localhost:9092  --topic financeapp-events --from-beginning --consumer-property group.id=query-service --consumer-property enable.auto.commit=false
+{"type":"com.mayosen.financeapp.event.AccountCreatedEvent","event":{"eventId":"df3cef16-9392-4852-a6ed-f0252b7c846c","aggregateId":"7e668605-04b0-466c-b1bc-1a431c8aa27b","timestamp":1747495275.730684800,"ownerId":"user123"}}
+{"type":"com.mayosen.financeapp.event.DepositPerformedEvent","event":{"eventId":"4458590f-eb7d-4f58-9377-9f3f752bea71","aggregateId":"7e668605-04b0-466c-b1bc-1a431c8aa27b","timestamp":1747496445.238248100,"amount":100}}
+{"type":"com.mayosen.financeapp.event.WithdrawalPerformedEvent","event":{"eventId":"da83d018-e01b-4b62-b11c-09670844f53a","aggregateId":"7e668605-04b0-466c-b1bc-1a431c8aa27b","timestamp":1747496545.556057100,"amount":50}}

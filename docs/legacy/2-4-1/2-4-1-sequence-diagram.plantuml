@@ -1,0 +1,15 @@
+@startuml
+actor CommandService as "Command Service"
+
+participant EventBus as "Event Bus"
+participant Projector as "AccountProjector"
+
+database ReadModel as "Read Model"
+
+CommandService -> EventBus: Опубликовать событие
+EventBus -> Projector: Получить событие
+Projector <-> ReadModel: Проверить идемпотентность
+Projector -> ReadModel: Обновить AccountSummary
+Projector -> ReadModel: Обновить TransactionHistory
+Projector -> ReadModel: Зафиксировать транзакцию
+@enduml

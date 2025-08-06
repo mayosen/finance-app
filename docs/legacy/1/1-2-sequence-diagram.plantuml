@@ -1,0 +1,15 @@
+@startuml
+actor Client
+participant CommandHandler
+participant EventStore
+participant Aggregate
+
+Client -> CommandHandler : Отправка команды
+CommandHandler -> EventStore : Загрузка истории событий
+EventStore --> CommandHandler : Возврат списка событий
+CommandHandler -> Aggregate : Применение событий
+CommandHandler -> Aggregate : Обработка команды
+Aggregate --> CommandHandler : Генерация нового события
+CommandHandler -> EventStore : Сохранение нового события
+EventStore --> CommandHandler : Подтверждение команды
+@enduml

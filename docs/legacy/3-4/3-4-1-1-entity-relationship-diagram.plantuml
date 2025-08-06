@@ -1,0 +1,8 @@
+@startuml
+entity "ACCOUNT_SUMMARY" as summary {
+  * account_id : varchar(100)       : PK, NOT NULL
+  * balance : numeric(12,2)         : NOT NULL
+  * owner_id : varchar(100)         : NOT NULL
+  * updated_at : timestamp        : NOT NULL, DEFAULT CURRENT_TIMESTAMP
+}
+@enduml

@@ -1,0 +1,13 @@
+@startuml
+actor Клиент
+participant "Write\nМодель" as WriteModel
+participant "Read\nМодель" as ReadModel
+
+Клиент -> WriteModel : Команда на изменение данных
+WriteModel -> WriteModel: Запись данных
+WriteModel --> Клиент : Подтверждение команды
+
+Клиент -> ReadModel : Запрос данных
+ReadModel -> ReadModel : Чтение данных
+ReadModel --> Клиент : Ответ с данными
+@enduml

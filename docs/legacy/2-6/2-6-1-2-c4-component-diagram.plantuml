@@ -1,0 +1,55 @@
+@startuml C4_Component
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+Person(user, "Пользователь", "Использует приложение для управления счётами и транзакциями")
+
+System_Boundary(financeSystem, "Финансовое приложение") {
+    System_Boundary(commandService, "Command Service") {
+        Container(commandController, "CommandController", "REST-контроллер")
+        Container(commandGateway, "CommandGateway", "Фасад для отправки команд")
+        Container(commandHandler, "CommandHandler", "Обработка команд")
+        Container(accountAggregate, "AccountAggregate", "Бизнес-логика агрегата")
+        Container(eventStore, "EventStore", "Сохранение событий")
+        Container(eventPublisher, "EventPublisher", "Публикация событий в шину")
+    }
+
+    System_Boundary(queryService, "Query Service") {
+        Container(queryController, "QueryController", "REST-контроллер")
+        Container(queryGateway, "QueryGateway", "Фасад для выполнения запросов")
+        Container(queryHandler, "QueryHandler", "Обработка запросов чтения")
+        Container(eventSubscriber, "EventSubscriber", "Подписка на события")
+        Container(accountProjector, "AccountProjector", "Обновление проекций")
+        Container(accountSummaryStore, "AccountSummaryStore", "Хранение проекции баланса")
+        Container(transactionHistoryStore, "TransactionHistoryStore", "Хранение истории транзакций")
+    }
+
+    ContainerDb(eventStoreDb, "Event Store DB", "Хранит события")
+    ContainerDb(readModelDb, "Read Model DB", "Хранит проекции")
+    Container(eventBus, "Event Bus", "Шина событий для доставки событий")
+}
+
+Rel(user, commandController, "Отправляет HTTP-команды")
+Rel(commandController, commandGateway, "Вызывает фасад")
+Rel(commandGateway, commandHandler, "Передаёт команды")
+Rel(commandHandler, accountAggregate, "Использует агрегат")
+Rel(commandHandler, eventStore, "Сохраняет события")
+
+Rel(eventStore, eventStoreDb, "Использует")
+
+Rel(commandHandler, eventPublisher, "Публикует события")
+Rel(eventPublisher, eventBus, "Отправляет события")
+Rel(eventBus, eventSubscriber, "Доставляет события")
+
+Rel(eventSubscriber, accountProjector, "Проецирует события")
+Rel(accountProjector, accountSummaryStore, "Обновляет баланс")
+Rel(accountProjector, transactionHistoryStore, "Сохраняет транзакции")
+
+Rel(user, queryController, "Отправляет HTTP-запросы чтения")
+Rel(queryController, queryGateway, "Вызывает фасад")
+Rel(queryGateway, queryHandler, "Передаёт запросы")
+Rel(queryHandler, accountSummaryStore, "Читает баланс")
+Rel(queryHandler, transactionHistoryStore, "Читает историю")
+
+Rel(accountSummaryStore, readModelDb, "Использует")
+Rel(transactionHistoryStore, readModelDb, "Использует")
+@enduml

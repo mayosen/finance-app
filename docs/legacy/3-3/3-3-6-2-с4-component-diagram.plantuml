@@ -1,0 +1,30 @@
+@startuml C4_Component
+!include <c4/C4_Component.puml>
+
+Person(user, "Пользователь", "Использует приложение для управления счётами и транзакциями")
+
+System_Boundary(financeSystem, "Финансовое приложение") {
+    System_Boundary(commandService, "Command Service") {
+        Component(commandController, "CommandController", "Kotlin, Spring Boot", "REST-контроллер для команд")
+        Component(commandGateway, "SyncCommandGateway", "Kotlin, Spring Boot", "Реализация CommandGateway")
+        Component(commandHandler, "CommandHandler", "Kotlin, Spring Boot", "Логика обработки команд")
+        Component(accountAggregate, "AccountAggregate", "Kotlin", "Доменный агрегат")
+        Component(eventStore, "JdbcEventStore", "Spring Data JDBC", "Хранилище событий")
+        Component(snapshotStore, "JdbcSnapshotStore", "Spring Data JDBС", "Хранилище снэпшотов")
+        Component(eventPublisher, "KafkaEventPublisher", "Spring Kafka", "Публикация событий в Kafka")
+    }
+    ContainerDb(eventDb, "Event DB", "H2", "Хранит события и снэпшоты")
+    Container(eventBus, "Event Bus", "Apache Kafka", "Шина событий")
+}
+
+Rel(user, commandController, "Отправляет HTTP-команды")
+Rel(commandController, commandGateway, "Вызывает фасад")
+Rel(commandGateway, commandHandler, "Передаёт команды")
+Rel(commandHandler, accountAggregate, "Использует агрегат для бизнес-логики")
+Rel(commandHandler, eventStore, "Сохраняет события")
+Rel(commandHandler, snapshotStore, "Сохраняет снэпшоты")
+Rel(commandHandler, eventPublisher, "Публикует события")
+Rel(eventStore, eventDb, "Использует")
+Rel(snapshotStore, eventDb, "Использует")
+Rel(eventPublisher, eventBus, "Отправляет события")
+@enduml

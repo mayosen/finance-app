@@ -1,0 +1,21 @@
+@startuml UseCase
+actor Пользователь as User
+
+left to right direction
+
+package "Финансовое приложение" {
+  usecase "Создать счёт" as UC_Create
+  usecase "Пополнить счёт" as UC_Deposit
+  usecase "Списать средства" as UC_Withdraw
+  usecase "Перевести между счетами" as UC_Transfer
+  usecase "Просмотреть баланс" as UC_GetBalance
+  usecase "Получить историю транзакций" as UC_GetHistory
+}
+
+User --> UC_Create
+User --> UC_Deposit
+User --> UC_Withdraw
+User --> UC_Transfer
+User --> UC_GetBalance
+User --> UC_GetHistory
+@enduml

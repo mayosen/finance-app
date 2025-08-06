@@ -1,0 +1,51 @@
+@startuml
+'top to bottom direction
+'left to right direction
+'skinparam linetype ortho
+'skinparam dpi 300
+'scale  max 600 width
+'scale 1200 height
+
+package "Command Service" {
+    interface EventStore {
+        + countByAggregateId(String): Int
+        + findAllByAggregateId(String): List<Event>
+        + findAllByAggregateIdAfterSequenceNumber(String, Long): List<Event>
+        + save()
+        + saveAll(List<Event>)
+    }
+
+    class JdbcEventStore {
+        + countByAggregateId(String): Int
+        + findAllByAggregateId(String): List<Event>
+        + findAllByAggregateIdAfterSequenceNumber(String, Long): List<Event>
+        + save()
+        + saveAll(List<Event>)
+    }
+
+    class EventSerializer {
+        + serialize(Event): EventEntity
+    }
+
+    class EventDeserializer {
+        + deserialize(EventEntity): Event
+    }
+
+    interface EventEntityRepository {
+        + countByAggregateId(String): Int
+        + findAllByAggregateId(String): List<EventEntity>
+        + findAllByAggregateIdAndSequenceNumberGreaterThan(String, Long): List<EventEntity>
+        + findMaxSequenceNumberByAggregateId(String): Long?
+    }
+}
+
+package "Spring Data JDBC" {
+  interface CrudRepository
+}
+
+EventStore <|.. JdbcEventStore
+JdbcEventStore ..> EventSerializer : использует
+JdbcEventStore ..> EventDeserializer : использует
+JdbcEventStore ..> EventEntityRepository : использует
+CrudRepository <|.. EventEntityRepository
+@enduml

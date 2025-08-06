@@ -1,0 +1,30 @@
+@startuml CommandModels
+package "Команды" {
+  interface Command
+
+  class CreateAccountCommand {
+    +String ownerId
+  }
+
+  class DepositMoneyCommand {
+    +String accountId
+    +BigDecimal amount
+  }
+
+  class WithdrawMoneyCommand {
+    +String accountId
+    +BigDecimal amount
+  }
+
+  class TransferMoneyCommand {
+    +String fromAccountId
+    +String toAccountId
+    +BigDecimal amount
+  }
+
+  CreateAccountCommand    ..|> Command
+  DepositMoneyCommand     ..|> Command
+  WithdrawMoneyCommand    ..|> Command
+  TransferMoneyCommand    ..|> Command
+}
+@enduml

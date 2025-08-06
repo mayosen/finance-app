@@ -1,0 +1,35 @@
+@startuml
+package "Query Service" {
+    interface TransactionHistoryStore {
+        + save(transaction: Transaction)
+        + findByAccountId(accountId: String, timePeriod: TimePeriod?, pagination: Pagination?): TransactionHistory
+    }
+
+    class JdbcTransactionHistoryStore {
+        + save(transaction: Transaction)
+        + findByAccountId(accountId: String, timePeriod: TimePeriod?, pagination: Pagination?): TransactionHistory
+    }
+
+    interface TransactionViewEntityRepository
+
+    interface TransactionViewEntityCustomRepository {
+        + findByFilters(accountId: String, from: Instant?, to: Instant?, offset: Int, limit: Int): List<TransactionViewEntity>
+        + countByFilters(accountId: String, from: Instant?, to: Instant?): Int
+    }
+
+    class TransactionViewEntityRepositoryImpl
+}
+
+package "Spring Data JDBC" {
+  interface CrudRepository
+
+  class NamedParameterJdbcTemplate
+}
+
+TransactionHistoryStore <|.. JdbcTransactionHistoryStore
+JdbcTransactionHistoryStore ..> TransactionViewEntityRepository : использует
+TransactionViewEntityRepository <|.. CrudRepository
+TransactionViewEntityRepository <|.. TransactionViewEntityCustomRepository
+TransactionViewEntityCustomRepository <|.. TransactionViewEntityRepositoryImpl
+TransactionViewEntityRepositoryImpl ..> NamedParameterJdbcTemplate : использует
+@enduml

@@ -1,0 +1,10 @@
+@startuml
+entity "event" as event {
+  * event_id : varchar(100)       : Идентификатор события [PK, NOT NULL]
+  * sequence_number : bigint      : Порядковый номер события [NOT NULL]
+  * aggregate_id : varchar(100)   : Идентификатор агрегата [NOT NULL]
+  * event_type : varchar(300)     : Полное квалифицированное имя класса события [NOT NULL]
+  * event_fields : text           : JSON-представление специфичных полей
+  * timestamp : timestamp         : Время события [NOT NULL]
+}
+@enduml

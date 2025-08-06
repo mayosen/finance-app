@@ -1,0 +1,13 @@
+@startuml
+participant EventBus as "Event Bus"
+participant EventSubscriber as "EventSubscriber"
+participant AccountProjector as "AccountProjector"
+participant AccountSummaryStore as "AccountSummaryStore"
+participant TransactionHistoryStore as "TransactionHistoryStore"
+
+
+EventBus -> EventSubscriber: Получение события
+EventSubscriber -> AccountProjector: Обработка события
+AccountProjector -> AccountSummaryStore: Обновление проекции AccountSummary
+AccountProjector -> TransactionHistoryStore: Обновление проекции TransactionHistory
+@enduml

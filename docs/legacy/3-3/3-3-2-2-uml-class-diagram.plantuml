@@ -1,0 +1,34 @@
+@startuml
+
+package "Command Service" {
+
+class CommandHandler
+
+interface SnapshotStore {
+      + findByAggregateId(String): AccountSnapshot?
+      + save(AccountAggregate)
+}
+
+class JdbcSnapshotStore {
+  + findByAggregateId(String): AccountSnapshot?
+  + save(AccountAggregate)
+}
+
+interface AccountSnapshotEntityRepository {
+}
+
+interface EventEntityRepository {
+  + findMaxSequenceNumberByAggregateId(String): Long?
+}
+}
+
+package "Spring Data JDBC" {
+  interface CrudRepository
+}
+
+CommandHandler ..> SnapshotStore : использует
+SnapshotStore <|.. JdbcSnapshotStore
+JdbcSnapshotStore ..> AccountSnapshotEntityRepository : использует
+JdbcSnapshotStore ..> EventEntityRepository : использует
+AccountSnapshotEntityRepository <|.. CrudRepository
+@enduml

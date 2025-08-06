@@ -1,0 +1,31 @@
+@startuml C4_Component
+!include <c4/C4_Component.puml>
+
+Person(user, "Пользователь", "Использует приложение для просмотра счёта и истории транзакций")
+
+System_Boundary(financeSystem, "Финансовое приложение") {
+    System_Boundary(queryService, "Query Service") {
+        Component(queryController, "QueryController", "Kotlin, Spring Boot", "REST-контроллер для чтения данных")
+        Component(queryGateway, "SyncQueryGateway", "Kotlin, Spring Boot", "Реализация QueryGateway")
+        Component(queryHandler, "QueryHandler", "Kotlin, Spring Boot", "Логика обработки запросов")
+        Component(accountSummaryStore, "JdbcAccountSummaryStore", "Spring Data JDBC", "Хранение проекций счёта")
+        Component(transactionHistoryStore, "JdbcTransactionHistoryStore", "Spring Data JDBC", "Хранение истории транзакций")
+        Component(eventSubscriber, "KafkaEventSubscriber", "Spring Kafka", "Подписка на события из шины")
+        Component(accountProjector, "AccountProjector", "Kotlin, Spring Boot", "Обновление проекций")
+    }
+    ContainerDb(readModelDb, "Read Model DB", "H2", "Хранит проекции счёта и истории транзакций")
+    Container(eventBus, "Event Bus", "Apache Kafka", "Шина событий")
+}
+
+Rel(user, queryController, "Отправляет HTTP-запросы")
+Rel(queryController, queryGateway, "Вызывает фасад")
+Rel(queryGateway, queryHandler, "Передаёт запросы")
+Rel(queryHandler, accountSummaryStore, "Читает проекцию счёта")
+Rel(queryHandler, transactionHistoryStore, "Читает историю транзакций")
+Rel(eventSubscriber, eventBus, "Слушает события")
+Rel(eventSubscriber, accountProjector, "Публикует события в проектор")
+Rel(accountProjector, accountSummaryStore, "Обновляет проекции")
+Rel(accountProjector, transactionHistoryStore, "Обновляет проекции")
+Rel(accountSummaryStore, readModelDb, "Использует")
+Rel(transactionHistoryStore, readModelDb, "Использует")
+@enduml

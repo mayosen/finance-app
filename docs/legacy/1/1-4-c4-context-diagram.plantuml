@@ -1,0 +1,19 @@
+@startuml C4_Context
+!include <c4/C4_Context.puml>
+
+'LAYOUT_LEFT_RIGHT()
+'scale max 1024 width
+
+' Определение участников и систем
+Person(user, "Пользователь", "Клиентское приложение")
+System(commandService, "Command Side", "Обрабатывает команды, сохраняет события")
+System(eventBus, "Event Bus", "Шина событий для передачи событий между сервисами")
+System(queryService, "Query Side", "Построение проекций для чтения данных")
+
+' Отношения между элементами
+Rel(user, commandService, "Отправляет команды")
+Rel(commandService, eventBus, "Публикует события")
+Rel(eventBus, queryService, "Доставляет события")
+Rel(queryService, user, "Обрабатывает запросы на чтение и возвращает данные")
+
+@enduml

@@ -1,0 +1,18 @@
+@startuml
+actor User as "Пользователь"
+participant CommandController as "CommandController"
+participant CommandGateway as "CommandGateway"
+participant CommandHandler as "CommandHandler"
+participant AccountAggregate as "AccountAggregate"
+participant EventStore as "EventStore"
+participant EventPublisher as "EventPublisher"
+participant EventBus as "Event Bus"
+
+User -> CommandController: Отправка команды
+CommandController -> CommandGateway: Передача команды
+CommandGateway -> CommandHandler: Обработка команды
+CommandHandler <-> AccountAggregate: Применение команды
+CommandHandler -> EventStore: Сохранение события
+CommandHandler -> EventPublisher: Публикация события
+EventPublisher -> EventBus: Доставка события
+@enduml

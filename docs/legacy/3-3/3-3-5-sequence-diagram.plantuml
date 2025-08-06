@@ -1,0 +1,40 @@
+@startuml
+
+'skinparam sequenceParticipantPadding 1
+actor Client
+
+participant CommandController
+participant SyncCommandGateway
+participant CommandHandler
+participant SnapshotStore
+participant EventStore
+participant AccountAggregate
+participant EventPublisher
+
+Client -> CommandController: POST /deposit
+CommandController -> SyncCommandGateway: send(DepositCommand)
+SyncCommandGateway -> CommandHandler: handleDeposit(command)
+CommandHandler -> SnapshotStore: findByAccountId(accountId)
+
+alt снимок существует
+    SnapshotStore -> CommandHandler: AccountSnapshot
+    CommandHandler <-> EventStore: findAllByAccountIdAfterSequenceNumber(accountId, lastSeq)
+    CommandHandler <-> AccountAggregate: loadFromSnapshot()
+else снимок не существует
+    CommandHandler <-> EventStore: findAllByAccountId(accountId)
+    CommandHandler <-> AccountAggregate: loadFromHistory()
+end
+
+CommandHandler -> AccountAggregate: deposit(amount)
+AccountAggregate -> CommandHandler: newEvents
+CommandHandler -> EventStore: saveAll(newEvents)
+CommandHandler -> EventPublisher: publishAll(newEvents)
+
+opt create сохранить снимок
+    CommandHandler -> SnapshotStore: save(aggregate)
+end
+
+CommandHandler --> SyncCommandGateway: OK
+SyncCommandGateway --> CommandController: OK
+CommandController --> Client: HTTP 200 OK
+@enduml

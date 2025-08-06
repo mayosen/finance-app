@@ -1,0 +1,6 @@
+2025-05-17T19:07:31.088+03:00  INFO 17008 --- [common] [ntainer#0-0-C-1] c.m.f.event.kafka.KafkaEventSubscriber   : Got message: {"type":"com.mayosen.financeapp.event.AccountCreatedEvent","event":{"eventId":"df3cef16-9392-4852-a6ed-f0252b7c846c","aggregateId":"7e668605-04b0-466c-b1bc-1a431c8aa27b","timestamp":1747495275.730684800,"ownerId":"user123"}}
+2025-05-17T19:07:37.561+03:00 DEBUG 17008 --- [common] [ntainer#0-0-C-1] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
+2025-05-17T19:07:37.566+03:00 DEBUG 17008 --- [common] [ntainer#0-0-C-1] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT COUNT("ACCOUNT_SUMMARY"."ACCOUNT_ID") FROM "ACCOUNT_SUMMARY" WHERE "ACCOUNT_SUMMARY"."ACCOUNT_ID" = ?]
+2025-05-17T19:07:41.953+03:00 DEBUG 17008 --- [common] [ntainer#0-0-C-1] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL update
+2025-05-17T19:07:41.957+03:00 DEBUG 17008 --- [common] [ntainer#0-0-C-1] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [INSERT INTO "ACCOUNT_SUMMARY" ("ACCOUNT_ID", "BALANCE", "OWNER_ID", "UPDATED_AT") VALUES (?, ?, ?, ?)]
+2025-05-17T19:07:42.081+03:00  INFO 17008 --- [common] [ntainer#0-0-C-1] c.m.f.event.kafka.KafkaEventSubscriber   : Message was processed

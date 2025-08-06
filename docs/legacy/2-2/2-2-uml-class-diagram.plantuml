@@ -1,0 +1,31 @@
+@startuml EventModels
+package "События" {
+  interface Event
+
+  class AccountCreatedEvent {
+    +String accountId
+    +String ownerId
+  }
+
+  class DepositPerformedEvent {
+    +String accountId
+    +BigDecimal amount
+  }
+
+  class WithdrawalPerformedEvent {
+    +String accountId
+    +BigDecimal amount
+  }
+
+  class TransferPerformedEvent {
+    +String fromAccountId
+    +String toAccountId
+    +BigDecimal amount
+  }
+
+  AccountCreatedEvent       ..|> Event
+  DepositPerformedEvent     ..|> Event
+  WithdrawalPerformedEvent  ..|> Event
+  TransferPerformedEvent    ..|> Event
+}
+@enduml

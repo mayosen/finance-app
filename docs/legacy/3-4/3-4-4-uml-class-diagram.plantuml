@@ -1,0 +1,16 @@
+@startuml
+package "Query Service" {
+  interface EventSubscriber {
+    + subscribe(handler: (Event) -> Unit)
+  }
+
+  class KafkaEventSubscriber {
+    + subscribe(handler: (Event) -> Unit)
+  }
+
+  class EventProcessingConfig
+}
+
+EventSubscriber <|.. KafkaEventSubscriber
+EventProcessingConfig ..> EventSubscriber : регистрирует обработчик
+@enduml

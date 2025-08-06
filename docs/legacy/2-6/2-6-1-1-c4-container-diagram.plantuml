@@ -1,0 +1,18 @@
+@startuml C4_Container
+!include <c4/C4_Container.puml>
+
+Person(user, "Пользователь", "Использует приложение для управления счетами")
+
+Container(commandService, "Command Service", "", "Обрабатывает команды, сохраняет события и публикует их в шину событий")
+Container(eventBus, "Event Bus", "", "Транспортная шина для доставки событий между сервисами")
+Container(queryService, "Query Service", "", "Обрабатывает запросы чтения и предоставляет проекции")
+ContainerDb(eventStoreDb, "Event Store DB", "", "Хранит неизменяемые события всех действий")
+ContainerDb(readModelDb, "Read Model DB", "", "Хранит проекции AccountSummary и TransactionHistory")
+
+Rel(user, commandService, "Отправляет команды")
+Rel(commandService, eventStoreDb, "Сохраняет события")
+Rel(commandService, eventBus, "Публикует события")
+Rel(eventBus, queryService, "Доставляет события")
+Rel(queryService, readModelDb, "Обновляет проекции")
+Rel(user, queryService, "Отправляет запросы на чтение")
+@enduml

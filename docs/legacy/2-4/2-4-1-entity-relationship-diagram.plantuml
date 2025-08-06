@@ -1,0 +1,20 @@
+@startuml ProjectionModels
+package "Проекции" {
+  class AccountSummary {
+    +String accountId
+    +String ownerId
+    +BigDecimal balance
+    +Instant updatedAt
+  }
+
+  class TransactionView {
+    +String accountId
+    +String transactionId
+    +String sourceEventId
+    +String type
+    +BigDecimal amount
+    +Instant timestamp
+    +String relatedAccountId
+  }
+}
+@enduml

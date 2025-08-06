@@ -1,0 +1,42 @@
+@startuml
+package "Query Service" {
+    class QueryController
+
+    interface QueryGateway
+
+    class SyncQueryGateway
+
+    class QueryHandler
+
+    interface AccountSummaryStore
+
+    class JdbcAccountSummaryStore
+
+    interface TransactionHistoryStore
+
+    class JdbcTransactionHistoryStore
+
+    interface EventSubscriber
+
+    class KafkaEventSubscriber
+
+    class AccountProjector
+
+    QueryController ..> QueryGateway : использует
+    QueryGateway <|.. SyncQueryGateway
+    SyncQueryGateway ..> QueryHandler : использует
+
+    QueryHandler ..> AccountSummaryStore : использует
+    QueryHandler ..> TransactionHistoryStore : использует
+
+    AccountSummaryStore <|.. JdbcAccountSummaryStore
+    TransactionHistoryStore <|.. JdbcTransactionHistoryStore
+
+    EventSubscriber <|.. KafkaEventSubscriber
+    EventProcessingConfig ..> EventSubscriber : регистрирует обработчик
+    EventProcessingConfig ..> AccountProjector : использует
+
+    AccountProjector ..> AccountSummaryStore : использует
+    AccountProjector ..> TransactionHistoryStore : использует
+}
+@enduml

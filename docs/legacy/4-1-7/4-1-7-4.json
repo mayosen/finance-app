@@ -1,0 +1,22 @@
+{
+  "transactions": [
+    {
+      "transactionId": "da83d018-e01b-4b62-b11c-09670844f53a",
+      "type": "WITHDRAWAL",
+      "amount": 50,
+      "timestamp": 1747496545.556057,
+      "relatedAccountId": null
+    },
+    {
+      "transactionId": "4458590f-eb7d-4f58-9377-9f3f752bea71",
+      "type": "DEPOSIT",
+      "amount": 100,
+      "timestamp": 1747496445.238248,
+      "relatedAccountId": null
+    }
+  ],
+  "pagination": {
+    "hasMore": false,
+    "total": 2
+  }
+}

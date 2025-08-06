@@ -1,0 +1,23 @@
+@startuml
+package "Command Service" {
+    class CommandHandler
+
+    interface EventPublisher {
+          + publish(Event)
+          + publishAll(List<Event>)
+    }
+
+    class KafkaEventPublisher {
+          + publish(Event)
+          + publishAll(List<Event>)
+    }
+}
+
+package "Spring Kafka" {
+    class KafkaTemplate
+}
+
+EventPublisher <|.. KafkaEventPublisher
+KafkaEventPublisher ..> KafkaTemplate : использует
+CommandHandler ..> EventPublisher : использует
+@enduml

@@ -1,0 +1,11 @@
+@startuml
+entity "TRANSACTION_VIEW" as tx {
+  * transaction_id : varchar(100)      : PK, NOT NULL
+  * account_id : varchar(100)          : NOT NULL
+  * source_event_id : varchar(100)     : NOT NULL
+  * type : varchar(100)                : NOT NULL
+  * amount : numeric(12,2)             : NOT NULL
+  * timestamp : timestamp              : NOT NULL, DEFAULT CURRENT_TIMESTAMP
+  * related_account_id : varchar(100)  : NULL
+}
+@enduml

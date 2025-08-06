@@ -1,0 +1,42 @@
+@startuml
+package "Command Service" {
+    class CommandController
+
+    interface CommandGateway
+
+    class SyncCommandGateway
+
+    class CommandHandler
+
+    class AccountAggregate
+
+    interface EventStore
+
+    class JdbcEventStore
+
+    interface SnapshotStore
+
+    class JdbcSnapshotStore
+
+    interface EventPublisher
+
+    class KafkaEventPublisher
+
+    CommandController ..> CommandGateway : использует
+    CommandGateway <|.. SyncCommandGateway
+    SyncCommandGateway ..> CommandHandler : использует
+    CommandHandler ..> AccountAggregate : использует
+    CommandHandler ..> EventStore : использует
+    CommandHandler ..> SnapshotStore : использует
+    CommandHandler ..> EventPublisher : использует
+
+    EventStore <|.. JdbcEventStore
+    JdbcEventStore ..> EventEntityRepository : использует
+
+    SnapshotStore <|.. JdbcSnapshotStore
+    JdbcSnapshotStore ..> AccountSnapshotEntityRepository : использует
+    JdbcSnapshotStore ..> EventEntityRepository : использует
+
+    EventPublisher <|.. KafkaEventPublisher
+}
+@enduml

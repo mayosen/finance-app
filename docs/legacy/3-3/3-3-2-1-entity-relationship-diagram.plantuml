@@ -1,0 +1,8 @@
+@startuml
+entity "SNAPSHOT" as snapshot {
+  * aggregate_id : varchar(100)       : PK, NOT NULL
+  * balance : numeric(12,2)           : NOT NULL
+  * last_sequence_number : bigint     : NOT NULL
+  * timestamp : timestamp             : NOT NULL, DEFAULT CURRENT_TIMESTAMP
+}
+@enduml

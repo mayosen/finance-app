@@ -1,0 +1,17 @@
+@startuml ProjectionModels
+package "Запросы" {
+  interface Query
+
+  class GetAccountSummaryQuery {
+      +String accountId
+    }
+
+  class GetTransactionHistoryQuery {
+    +String accountId
+    -TimePeriod timePeriod
+  }
+
+  GetAccountSummaryQuery        ..|> Query
+  GetTransactionHistoryQuery    ..|> Query
+}
+@enduml
