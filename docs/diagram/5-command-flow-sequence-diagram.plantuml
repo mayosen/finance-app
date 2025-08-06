@@ -23,7 +23,7 @@ end
 CommandHandler <-> AccountAggregate: Применение команды
 CommandHandler -> EventStore: Сохранение события
 
-opt create сохранить снимок
+opt сохранить снимок
     CommandHandler -> SnapshotStore: Сохранение снимка состояния системы
 end
 
