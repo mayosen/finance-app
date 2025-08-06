@@ -16,14 +16,6 @@
 
 ![Диаграмма прецедентов](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/2-use-case-diagram.plantuml)
 
-Диаграмма классов сервиса команд
-
-![Диаграмма классов сервиса команд](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/3-command-service-class-diagram.plantuml)
-
-Диаграмма классов сервиса запросов
-
-![Диаграмма классов сервиса запросов](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/4-query-service-class-diagram.plantuml)
-
 Диаграмма последовательностей для потока команд
 
 ![Диаграмма последовательностей для потока команд](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mayosen/finance-app/refs/heads/docs/decribe-project/docs/diagram/5-command-flow-sequence-diagram.plantuml)
