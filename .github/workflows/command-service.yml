@@ -64,13 +64,13 @@ jobs:
         run: mvn -pl command-service -am verify
 
       - name: Report all test results
-        if: success() || failure()
         uses: dorny/test-reporter@v1
+        if: success() || failure()
         with:
           name: command-service-test-reports-dorny
           path: |
-            **/target/surefire-reports/*.xml
-            **/target/failsafe-reports/*.xml
+            command-service/target/surefire-reports/*.xml
+            command-service/target/failsafe-reports/*.xml
           reporter: java-junit
 
       - name: Archive test reports
