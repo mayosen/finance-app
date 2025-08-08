@@ -51,6 +51,9 @@
             <plugin>
                 <groupId>com.github.gantsign.maven</groupId>
                 <artifactId>ktlint-maven-plugin</artifactId>
+                <configuration>
+                    <includeTestSources>false</includeTestSources>
+                </configuration>
             </plugin>
         </plugins>
     </build>

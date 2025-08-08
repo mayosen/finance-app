@@ -63,6 +63,15 @@ jobs:
       - name: Run tests
         run: mvn -pl command-service -am verify
 
+      - name: Diagnostic info
+        run: |
+          echo "=== Текущая директория ==="
+          pwd
+          echo "=== Содержимое текущей директории ==="
+          ls -la
+          echo "=== Полное дерево файлов ==="
+          find .
+
       - name: Report all test results
         uses: dorny/test-reporter@v1
         if: success() || failure()
