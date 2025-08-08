@@ -69,9 +69,10 @@ jobs:
         with:
           name: query-service-test-reports-dorny
           path: |
-            query-service/target/surefire-reports/*.xml
+            query-service/target/surefire-reports/*.xml,
             query-service/target/failsafe-reports/*.xml
           reporter: java-junit
+          fail-on-empty: 'false'
 
       - name: Archive test reports
         uses: actions/upload-artifact@v4

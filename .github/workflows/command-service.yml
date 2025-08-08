@@ -78,9 +78,10 @@ jobs:
         with:
           name: command-service-test-reports-dorny
           path: |
-            command-service/target/surefire-reports/*.xml
+            command-service/target/surefire-reports/*.xml,
             command-service/target/failsafe-reports/*.xml
           reporter: java-junit
+          fail-on-empty: 'false'
 
       - name: Archive test reports
         uses: actions/upload-artifact@v4
