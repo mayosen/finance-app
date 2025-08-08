@@ -79,7 +79,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
-          name: command-service-test-reports-dorny
+          name: test-reports
           path: |
             command-service/target/surefire-reports/*.xml,
             command-service/target/failsafe-reports/*.xml
